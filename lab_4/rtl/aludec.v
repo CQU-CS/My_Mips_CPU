@@ -38,6 +38,5 @@ module aludec(
 				default:  alucontrol <= 3'b000;
 			endcase
 		endcase
-	
 	end
 endmodule
