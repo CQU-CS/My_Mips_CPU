@@ -1,2 +1,3 @@
-# CST31101_lab
-vivado labs for computer organization course in Chongqing University
+# CQU硬综Mips处理器设计实现
+
+重庆大学2019级计算机学院硬件综合设计
