@@ -104,3 +104,48 @@ Copyright 1986-2021 Xilinx, Inc. All Rights Reserved.
 // [Engine Memory]: 1,259 MB (+1168562kb) [00:00:13]
 // [GUI Memory]: 105 MB (+23079kb) [00:00:13]
 // WARNING: HEventQueue.dispatchEvent() is taking  2971 ms.
+// Project name: lab_4; location: E:/VIVADO/My_Mips_CPU/lab_4/lab_4; part: xc7a100tfgg484-1
+// Tcl Message: open_project: Time (s): cpu = 00:00:21 ; elapsed = 00:00:09 . Memory (MB): peak = 1239.641 ; gain = 0.000 
+dismissDialog("Open Project"); // bA
+expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Constraints]", 0); // D
+collapseTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Constraints]", 0); // D
+// Tcl Message: update_compile_order -fileset sources_1 
+// [GUI Memory]: 111 MB (+249kb) [00:00:20]
+expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v)]", 1); // D
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v)]", 1, true); // D - Node
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v)]", 1, true); // D - Node
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v)]", 1, true, false, false, false, false, true); // D - Double Click - Node
+// WARNING: HEventQueue.dispatchEvent() is taking  1251 ms.
+// [GUI Memory]: 116 MB (+70kb) [00:00:25]
+dismissDialog("Opening Editor"); // bA
+selectCodeEditor("top.v", 68, 248, false, true, false, false, false); // be - Control Key
+selectCodeEditor("top.v", 85, 269, false, true, false, false, false); // be - Control Key
+selectCodeEditor("top.v", 131, 271); // be
+// Elapsed time: 32 seconds
+expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v), mips : mips (mips.v)]", 2); // D
+expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v), mips : mips (mips.v), c : controller (controller.v)]", 3); // D
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v), mips : mips (mips.v), c : controller (controller.v), md : maindec (maindec.v)]", 4, false); // D
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v), mips : mips (mips.v), c : controller (controller.v), md : maindec (maindec.v)]", 4, false, false, false, false, false, true); // D - Double Click
+// WARNING: HEventQueue.dispatchEvent() is taking  1187 ms.
+dismissDialog("Opening Editor"); // bA
+// Elapsed time: 11 seconds
+closeView(PAResourceOtoP.PAViews_CODE, "Code"); // D
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v), mips : mips (mips.v), c : controller (controller.v), ad : aludec (aludec.v)]", 5, false); // D
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v), mips : mips (mips.v), c : controller (controller.v), ad : aludec (aludec.v)]", 5, false, false, false, false, false, true); // D - Double Click
+// WARNING: HEventQueue.dispatchEvent() is taking  1342 ms.
+closeView(PAResourceOtoP.PAViews_CODE, "Code"); // D
+// [GUI Memory]: 131 MB (+8894kb) [00:01:30]
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v), mips : mips (mips.v), c : controller (controller.v), ad : aludec (aludec.v)]", 5, false); // D
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v), mips : mips (mips.v), c : controller (controller.v), ad : aludec (aludec.v)]", 5, false, false, false, false, false, true); // D - Double Click
+// WARNING: HEventQueue.dispatchEvent() is taking  1190 ms.
+dismissDialog("Opening Editor"); // bA
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v), mips : mips (mips.v), c : controller (controller.v)]", 3, true); // D - Node
+selectTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v), mips : mips (mips.v), c : controller (controller.v)]", 3, true, false, false, false, false, true); // D - Double Click - Node
+// WARNING: HEventQueue.dispatchEvent() is taking  1273 ms.
+dismissDialog("Opening Editor"); // bA
+// Elapsed time: 286 seconds
+collapseTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v), mips : mips (mips.v)]", 2); // D
+expandTree(PAResourceEtoH.FileSetPanel_FILE_SET_PANEL_TREE, "[root, Design Sources, top (top.v), mips : mips (mips.v)]", 2); // D
+// HMemoryUtils.trashcanNow. Engine heap size: 1,259 MB. GUI used memory: 73 MB. Current time: 1/2/22, 12:15:32 AM CST
+// TclEventType: DG_GRAPH_STALE
+// TclEventType: FILE_SET_CHANGE
