@@ -30,11 +30,12 @@ module datapath(
            input wire jumpD,
            output wire equalD,
            output wire[5:0] opD,functD,
+           input wire[3:0] memwriteD,
            //execute stage
            input wire memtoregE,
            input wire alusrcE,regdstE,
            input wire regwriteE,
-           input wire[4:0] alucontrolE,
+           input wire[2:0] alucontrolE,
            output wire flushE,
            //mem stage
            input wire memtoregM,
@@ -42,6 +43,7 @@ module datapath(
            output wire[31:0] aluoutM,writedataM,
            input wire[31:0] readdataM,
            input wire[2:0] lshbM,
+           output wire[3:0] memwriteM,
            //writeback stage
            input wire memtoregW,
            input wire regwriteW,
@@ -66,12 +68,14 @@ wire [4:0] writeregE;
 wire [31:0] signimmE;
 wire [31:0] srcaE,srca2E,srcbE,srcb2E,srcb3E;
 wire [31:0] aluoutE;
+wire [3:0] memwriteE;
 //mem stage
 wire [4:0] writeregM;
+wire [3:0] memwriteM1;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//写回字�?�半字�?�字节拓�?
+wire [31:0] readdataWB;//鍐欏洖瀛楋拷?锟藉崐瀛楋拷?锟藉瓧鑺傛嫇锟???
 
 //hazard detection
 hazard h(
@@ -133,6 +137,7 @@ floprc #(32) r3E(clk,rst,flushE,signimmD,signimmE);
 floprc #(5) r4E(clk,rst,flushE,rsD,rsE);
 floprc #(5) r5E(clk,rst,flushE,rtD,rtE);
 floprc #(5) r6E(clk,rst,flushE,rdD,rdE);
+floprc #(4) r7E(clk,rst,flushE,memwriteD,memwriteE);
 
 mux3 #(32) forwardaemux(srcaE,resultW,aluoutM,forwardaE,srca2E);
 mux3 #(32) forwardbemux(srcbE,resultW,aluoutM,forwardbE,srcb2E);
@@ -144,11 +149,59 @@ mux2 #(5) wrmux(rtE,rdE,regdstE,writeregE);
 flopr #(32) r1M(clk,rst,srcb2E,writedataM);
 flopr #(32) r2M(clk,rst,aluoutE,aluoutM);
 flopr #(5) r3M(clk,rst,writeregE,writeregM);
+flopr #(4) r4M(clk,rst,memwriteE,memwriteM1);
+//temp memwrite
+reg[3:0] memwriteTemp = 4'b0000;
+assign memwriteM = memwriteTemp;
+always @(*)
+begin
+    case(lshbM)
+        //sw
+        3'b111:
+        begin
+            memwriteTemp <= 4'b1111;
+        end
+        //sh
+        3'b110:
+        begin
+            case(aluoutM[1])
+                1'b0:
+                    memwriteTemp <= 4'b1100;
+                1'b1:
+                    memwriteTemp <= 4'b0011;
+                default:
+                    memwriteTemp <= 4'b0000;
+            endcase
+        end
+        //sb
+        3'b101:
+        begin
+            case(aluoutM[1:0])
+                2'b00:
+                    memwriteTemp <= 4'b1000;
+                2'b01:
+                    memwriteTemp <= 4'b0100;
+                2'b10:
+                    memwriteTemp <= 4'b0010;
+                2'b11:
+                    memwriteTemp <= 4'b0001;
+                default:
+                    memwriteTemp <= 4'b0000;
+            endcase
+        end
+        default:
+        begin
+            memwriteTemp <= 4'b0000;
+        end
+    endcase
+end
 
+//assign memwriteM =memwriteM1;
 //writeback stage
 flopr #(32) r1W(clk,rst,aluoutM,aluoutW);
 flopr #(32) r2W(clk,rst,readdataM,readdataW);
 flopr #(5) r3W(clk,rst,writeregM,writeregW);
 assign readdataWB = (lshbW==3'b000)?{{24{readdataW[31]}},readdataW[31:24]}:(lshbW==3'b001)?{{24{1'b0}},readdataW[31:24]}:(lshbW==3'b010)?{{16{readdataW[31]}},readdataW[31:16]}:(lshbW==3'b011)?{{16{1'b0}},readdataW[31:16]}:readdataW;
+//assign readdataWB = readdataW;
 mux2 #(32) resmux(aluoutW,readdataWB,memtoregW,resultW);
 endmodule

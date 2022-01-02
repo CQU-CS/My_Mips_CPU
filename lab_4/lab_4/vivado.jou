@@ -30,3 +30,23 @@ wait_on_run inst_mem_synth_1
 
 launch_simulation
 source testbench.tcl
+update_compile_order -fileset sources_1
+update_compile_order -fileset sources_1
+update_compile_order -fileset sources_1
+add_bp {E:/VIVADO/My_Mips_CPU/lab_4/rtl/datapath.v} 122
+remove_bps -file {E:/VIVADO/My_Mips_CPU/lab_4/rtl/datapath.v} -line 122
+close_sim
+launch_simulation
+source testbench.tcl
+close_sim
+launch_simulation
+source testbench.tcl
+close_sim
+launch_simulation
+source testbench.tcl
+close_sim
+launch_simulation
+source testbench.tcl
+close_sim
+launch_simulation
+source testbench.tcl
