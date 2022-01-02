@@ -50,3 +50,14 @@ source testbench.tcl
 close_sim
 launch_simulation
 source testbench.tcl
+run all
+relaunch_sim
+close_sim
+launch_simulation
+source testbench.tcl
+relaunch_sim
+close_sim
+launch_simulation
+source testbench.tcl
+relaunch_sim
+relaunch_sim
