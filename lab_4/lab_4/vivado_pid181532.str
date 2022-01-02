@@ -257,3 +257,4 @@ selectGraphicalView(RDIResource.RDIViews_WAVEFORM_VIEWER, 654, 265); // b
 // TclEventType: WAVEFORM_UPDATE_COMMANDS
 // TclEventType: WAVEFORM_MOVE_CURSOR
 // [GUI Memory]: 137 MB (+4690kb) [00:03:23]
+// WARNING: HSwingWorker (Refresh Filesets Swing Worker) is taking 1797 ms. Increasing delay to 5391 ms.
