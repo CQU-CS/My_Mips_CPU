@@ -21,54 +21,6 @@
 
 
 module datapath(
-	input wire clk,rst,
-	//fetch stage
-	output wire[31:0] pcF,
-	input wire[31:0] instrF,
-	//decode stage
-	input wire pcsrcD,branchD,
-	input wire jumpD,
-	output wire equalD,
-	output wire[5:0] opD,functD,
-	//execute stage
-	input wire memtoregE,
-	input wire alusrcE,regdstE,
-	input wire regwriteE,
-	input wire[4:0] alucontrolE,
-	output wire flushE,
-	//mem stage
-	input wire memtoregM,
-	input wire regwriteM,
-	output wire[31:0] aluoutM,writedataM,
-	input wire[31:0] readdataM,
-	//writeback stage
-	input wire memtoregW,
-	input wire regwriteW
-    );
-	
-	//fetch stage
-	wire stallF;
-	//FD
-	wire [31:0] pcnextFD,pcnextbrFD,pcplus4F,pcbranchD;
-	//decode stage
-	wire [31:0] pcplus4D,instrD;
-	wire forwardaD,forwardbD;
-	wire [4:0] rsD,rtD,rdD;
-	wire flushD,stallD; 
-	wire [31:0] signimmD,signimmshD;
-	wire [31:0] srcaD,srca2D,srcbD,srcb2D;
-	//execute stage
-	wire [1:0] forwardaE,forwardbE;
-	wire [4:0] rsE,rtE,rdE;
-	wire [4:0] writeregE;
-	wire [31:0] signimmE;
-	wire [31:0] srcaE,srca2E,srcbE,srcb2E,srcb3E;
-	wire [31:0] aluoutE;
-	//mem stage
-	wire [4:0] writeregM;
-	//writeback stage
-	wire [4:0] writeregW;
-	wire [31:0] aluoutW,readdataW,resultW;
            input wire clk,rst,
            //fetch stage
            output wire[31:0] pcF,
@@ -82,7 +34,7 @@ module datapath(
            input wire memtoregE,
            input wire alusrcE,regdstE,
            input wire regwriteE,
-           input wire[2:0] alucontrolE,
+           input wire[4:0] alucontrolE,
            output wire flushE,
            //mem stage
            input wire memtoregM,

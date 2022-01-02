@@ -10,6 +10,8 @@ INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/alu
 INFO: [VRFC 10-311] analyzing module aludec
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module controller
+INFO: [VRFC 10-2458] undeclared symbol lshbD, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:61]
+INFO: [VRFC 10-2458] undeclared symbol lshbE, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:80]
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/datapath.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module datapath
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/eqcmp.v" into library xil_defaultlib
@@ -28,8 +30,8 @@ INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/mai
 INFO: [VRFC 10-311] analyzing module maindec
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/mips.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module mips
-INFO: [VRFC 10-2458] undeclared symbol branchD, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/mips.v:42]
-INFO: [VRFC 10-2458] undeclared symbol jumpD, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/mips.v:42]
+INFO: [VRFC 10-2458] undeclared symbol branchD, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/mips.v:45]
+INFO: [VRFC 10-2458] undeclared symbol jumpD, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/mips.v:45]
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/mux2.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module mux2
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/mux3.v" into library xil_defaultlib
@@ -46,5 +48,3 @@ INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/top
 INFO: [VRFC 10-311] analyzing module top
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/sim/testbench.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module testbench
-INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/lab_4/lab_4.sim/sim_1/behav/xsim/glbl.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module glbl
