@@ -196,7 +196,7 @@ begin
     endcase
 end
 
-//assign memwriteM =memwriteM1;
+assign memwriteM = memwriteM1;
 //writeback stage
 flopr #(32) r1W(clk,rst,aluoutM,aluoutW);
 flopr #(32) r2W(clk,rst,readdataM,readdataW);
