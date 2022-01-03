@@ -37,14 +37,24 @@ begin
     case (op)
         `EXE_ADD_OP:
             y <= addr;
+        `EXE_ADDU_OP:
+            y <= addr;
         `EXE_SUB_OP:
+            y <= subr;
+        `EXE_SUBU_OP:
             y <= subr;
         `EXE_AND_OP:
             y <= a & b;
         `EXE_OR_OP:
             y <= a | b;
+        `EXE_XOR_OP:
+            y <= a ^ b;
+        `EXE_NOR_OP:
+            y <= ~(a | b);
         `EXE_SLT_OP:
-            y <= subr[31];
+            y <= ((a[31] && !b[31])||(subr[31] && !(!a[31] && b[31])));
+        `EXE_SLTU_OP:
+            y <= (a<b);
         default:
             y <= 32'b0;
     endcase
