@@ -29,39 +29,42 @@ module maindec(
            output wire regdst,regwrite,
            output wire jump,
            output wire[1:0] aluop,
-           output wire[2:0] lshb
+           output wire[2:0] lshb,
+           output wire jr,
+           output wire jal,
+           output wire pceight
        );
-reg[14:0] controls;
-assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,aluop,lshb} = controls;
+reg[17:0] controls;
+assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,aluop,lshb,jr,jal,pceight} = controls;
 always @(*)
 begin
     case (op)
         6'b000000:
-            controls <= 15'b110000000010100;//R-TYRE
+            controls <= 15'b11000000001010000;//R-TYRE
         6'b100000:
-            controls <= 15'b101000001000000;//lb
+            controls <= 15'b10100000100000000;//lb
         6'b100100:
-            controls <= 15'b101000001000001;//lbu
+            controls <= 15'b10100000100000100;//lbu
         6'b100001:
-            controls <= 15'b101000001000010;//lh
+            controls <= 15'b10100000100001000;//lh
         6'b100101:
-            controls <= 15'b101000001000011;//lhu
+            controls <= 15'b10100000100001100;//lhu
         6'b100011:
-            controls <= 15'b101000001000100;//LW
+            controls <= 15'b10100000100010000;//LW
         6'b101000:
-            controls <= 15'b001011110000101;//sb
+            controls <= 15'b00101111000010100;//sb
         6'b101001:
-            controls <= 15'b001011110000110;//sh
+            controls <= 15'b00101111000011000;//sh
         6'b101011:
-            controls <= 15'b001011110000111;//SW
+            controls <= 15'b00101111000011100;//SW
         6'b000100:
-            controls <= 15'b000100000001100;//BEQ
+            controls <= 15'b00010000000110000;//BEQ
         6'b001000:
-            controls <= 15'b101000000000100;//ADDI
+            controls <= 15'b10100000000010000;//ADDI
         6'b000010:
-            controls <= 15'b000000000100100;//J
+            controls <= 15'b00000000010010000;//J
         default:
-            controls <= 15'b000000000000100;//illegal op
+            controls <= 15'b00000000000010000;//illegal op
     endcase
 end
 endmodule

@@ -29,6 +29,9 @@ module controller(
 //           output wire equalD,
            output wire jumpD,
            output wire[3:0] memwriteD,
+           output wire jrD,
+           output wire jalD,
+           output wire pceightD,
 
            //execute stage
            input wire flushE,
@@ -66,7 +69,11 @@ maindec md(
             regdstD,regwriteD,
             jumpD,
             aluopD,
-            lshbD
+            lshbD,
+            jrD,
+            jalD,
+            pceightD
+            
         );
 aludec ad(functD,aluopD,alucontrolD);
 

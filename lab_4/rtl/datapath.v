@@ -32,6 +32,9 @@ module datapath(
            //           output wire equalD,
            output wire[5:0] opD,functD,
            input wire[3:0] memwriteD,
+           input wire jrD,
+           input wire jalD,
+           input wire pceightD,
            //execute stage
            input wire memtoregE,
            input wire alusrcE,regdstE,
@@ -55,6 +58,7 @@ module datapath(
 wire stallF;
 //FD
 wire [31:0] pcnextFD,pcnextbrFD,pcplus4F,pcbranchD;
+wire [31:0] pcnextjrFD;  //jr
 //decode stage
 wire [31:0] pcplus4D,instrD;
 wire forwardaD,forwardbD;
@@ -72,13 +76,19 @@ wire [31:0] signimmE;
 wire [31:0] srcaE,srca2E,srcbE,srcb2E,srcb3E;
 wire [31:0] aluoutE;
 wire [3:0] memwriteE;
+wire jalE;
+wire pceightE;
+wire [31:0] pcplus4E;
+wire [31:0] pcplus8E;
+wire [31:0] aluoutE2;
+wire [4:0] writeregE2;
 //mem stage
 wire [4:0] writeregM;
 wire [3:0] memwriteM1;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//鍐欏洖�?�楋�??锟藉崐�?�楋�??锟藉瓧鑺傛嫇�????
+wire [31:0] readdataWB;//鍐欏洖�?�楋�???锟藉崐�?�楋�???锟藉瓧鑺傛嫇�?????
 
 //hazard detection
 hazard h(
@@ -107,7 +117,8 @@ hazard h(
 
 //next PC logic (operates in fetch an decode)
 mux2 #(32) pcbrmux(pcplus4F,pcbranchD,pcsrcD,pcnextbrFD);
-mux2 #(32) pcmux(pcnextbrFD,
+mux2 #(32) jrmux(pcnextbrFD,srcaD,jrD,pcnextjrFD);
+mux2 #(32) pcmux(pcnextjrFD,
                  {pcplus4D[31:28],instrD[25:0],2'b00},
                  jumpD,pcnextFD);
 
@@ -242,17 +253,24 @@ floprc #(5) r4E(clk,rst,flushE,rsD,rsE);
 floprc #(5) r5E(clk,rst,flushE,rtD,rtE);
 floprc #(5) r6E(clk,rst,flushE,rdD,rdE);
 floprc #(4) r7E(clk,rst,flushE,memwriteD,memwriteE);
+floprc #(1) r8E(clk,rst,flushE,jalD,jalE);
+floprc #(32) r9E(clk,rst,flushE,pcplus4D,pcplus4E);
+floprc #(1) r10E(clk,rst,flushE,pceightD,pceightE);
+
+assign pcplus8E = pcplus4E + 32'h0004;  //get pc+8
 
 mux3 #(32) forwardaemux(srcaE,resultW,aluoutM,forwardaE,srca2E);
 mux3 #(32) forwardbemux(srcbE,resultW,aluoutM,forwardbE,srcb2E);
 mux2 #(32) srcbmux(srcb2E,signimmE,alusrcE,srcb3E);
 alu alu(srca2E,srcb3E,alucontrolE,aluoutE);
 mux2 #(5) wrmux(rtE,rdE,regdstE,writeregE);
+mux2 #(32) aluEpc8Emux(aluoutE,pcplus8E,pceightE,aluoutE2);  //jal,bal,pc+8 or aluout
+mux2 #(5) jalbalmux(writeregE,5'b11111,jalE,writeregE2);  //jal,bal,31 or rt,rd
 
 //mem stage
 flopr #(32) r1M(clk,rst,srcb2E,writedataM);
-flopr #(32) r2M(clk,rst,aluoutE,aluoutM);
-flopr #(5) r3M(clk,rst,writeregE,writeregM);
+flopr #(32) r2M(clk,rst,aluoutE2,aluoutM);
+flopr #(5) r3M(clk,rst,writeregE2,writeregM);
 flopr #(4) r4M(clk,rst,memwriteE,memwriteM1);
 //temp memwrite
 reg[3:0] memwriteTemp = 4'b0000;

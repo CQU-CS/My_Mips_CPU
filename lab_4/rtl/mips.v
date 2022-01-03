@@ -48,6 +48,9 @@ controller c(
                branchD,
 //               equalD,
                jumpD,memwriteD,
+               jrD,
+               jalD,
+               pceightD,
 
                //execute stage
                flushE,
@@ -73,6 +76,9 @@ datapath dp(
 //             equalD,
              opD,functD,
              memwriteD,
+             jrD,
+             jalD,
+             pceightD,
              //execute stage
              memtoregE,
              alusrcE,regdstE,
