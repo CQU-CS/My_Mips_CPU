@@ -12,3 +12,7 @@
 #-----------------------------------------------------------
 start_gui
 open_project E:/VIVADO/My_Mips_CPU/lab_4/lab_4/lab_4.xpr
+update_compile_order -fileset sources_1
+launch_simulation
+source testbench.tcl
+relaunch_sim
