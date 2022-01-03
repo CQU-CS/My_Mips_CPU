@@ -31,7 +31,7 @@ module controller(
            input wire flushE,
            output wire memtoregE,alusrcE,
            output wire regdstE,regwriteE,
-           output wire[2:0] alucontrolE,
+           output wire[7:0] alucontrolE,
 
            //mem stage
            output wire memtoregM,
@@ -48,7 +48,7 @@ wire[1:0] aluopD;
 // wire memtoregD,memwriteD,alusrcD,
 //      regdstD,regwriteD;
 wire memtoregD,alusrcD,regdstD,regwriteD;
-wire[2:0] alucontrolD;
+wire[7:0] alucontrolD;
 wire[2:0] lshbD;
 wire[3:0] memwriteD;
 
@@ -70,7 +70,7 @@ aludec ad(functD,aluopD,alucontrolD);
 assign pcsrcD = branchD & equalD;
 
 //pipeline registers
-floprc #(8) regE(
+floprc #(13) regE(
            clk,
            rst,
            flushE,

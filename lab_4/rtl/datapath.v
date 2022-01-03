@@ -35,7 +35,7 @@ module datapath(
            input wire memtoregE,
            input wire alusrcE,regdstE,
            input wire regwriteE,
-           input wire[2:0] alucontrolE,
+           input wire[7:0] alucontrolE,
            output wire flushE,
            //mem stage
            input wire memtoregM,

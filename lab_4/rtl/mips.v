@@ -37,7 +37,7 @@ wire [2:0] lshbM;
 wire [2:0] lshbW;
 wire [3:0] memwriteD;
 
-wire [2:0] alucontrolE;
+wire [7:0] alucontrolE;
 wire flushE,equalD;
 
 controller c(

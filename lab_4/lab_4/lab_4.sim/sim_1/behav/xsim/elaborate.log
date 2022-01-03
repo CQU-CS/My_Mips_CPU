@@ -5,7 +5,7 @@ Using 2 slave threads.
 Starting static elaboration
 Pass Through NonSizing Optimizer
 WARNING: [VRFC 10-3091] actual bit length 1 differs from formal bit length 4 for port 'memwrite' [E:/VIVADO/My_Mips_CPU/lab_4/sim/testbench.v:30]
-WARNING: [VRFC 10-3091] actual bit length 11 differs from formal bit length 8 for port 'd' [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:77]
+WARNING: [VRFC 10-3091] actual bit length 16 differs from formal bit length 13 for port 'd' [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:77]
 WARNING: [VRFC 10-3091] actual bit length 3 differs from formal bit length 8 for port 'd' [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:96]
 WARNING: [VRFC 10-3091] actual bit length 3 differs from formal bit length 8 for port 'q' [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:97]
 WARNING: [VRFC 10-3091] actual bit length 2 differs from formal bit length 8 for port 'd' [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:106]
@@ -16,7 +16,7 @@ Completed simulation data flow analysis
 Time Resolution for simulation is 1ps
 Compiling module xil_defaultlib.maindec
 Compiling module xil_defaultlib.aludec
-Compiling module xil_defaultlib.floprc
+Compiling module xil_defaultlib.floprc(WIDTH=13)
 Compiling module xil_defaultlib.floprc(WIDTH=3)
 Compiling module xil_defaultlib.floprc(WIDTH=1)
 Compiling module xil_defaultlib.flopr

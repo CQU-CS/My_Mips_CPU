@@ -23,19 +23,19 @@
 module aludec(
 	input wire[5:0] funct,
 	input wire[1:0] aluop,
-	output reg[2:0] alucontrol
+	output reg[7:0] alucontrol
     );
 	always @(*) begin
 		case (aluop)
-			2'b00: alucontrol <= 3'b010;//add (for lw/sw/addi)
-			2'b01: alucontrol <= 3'b110;//sub (for beq)
+			2'b00: alucontrol <= 8'b00000010;//add (for lw/sw/addi)
+			2'b01: alucontrol <= 8'b00000110;//sub (for beq)
 			default : case (funct)
-				`EXE_ADD:alucontrol <= 3'b010; //add
-				`EXE_SUB:alucontrol <= 3'b110; //sub
-				`EXE_AND:alucontrol <= 3'b000; //and
-				`EXE_OR:alucontrol <= 3'b001; //or
-				`EXE_SLT:alucontrol <= 3'b111; //slt
-				default:  alucontrol <= 3'b000;
+				`EXE_ADD:alucontrol <= 8'b00000010; //add
+				`EXE_SUB:alucontrol <= 8'b00000110; //sub
+				`EXE_AND:alucontrol <= 8'b00000000; //and
+				`EXE_OR:alucontrol <= 8'b00000001; //or
+				`EXE_SLT:alucontrol <= 8'b00000111; //slt
+				default:  alucontrol <= 8'b00000000;
 			endcase
 		endcase
 	end
