@@ -49,5 +49,3 @@ INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/top
 INFO: [VRFC 10-311] analyzing module top
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/sim/testbench.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module testbench
-INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/lab_4/lab_4.sim/sim_1/behav/xsim/glbl.v" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module glbl
