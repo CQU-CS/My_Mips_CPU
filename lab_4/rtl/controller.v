@@ -32,6 +32,7 @@ module controller(
            output wire jrD,
            output wire jalD,
            output wire pceightD,
+           output wire signD,
 
            //execute stage
            input wire flushE,
@@ -71,7 +72,8 @@ maindec md(
             lshbD,
             jrD,
             jalD,
-            pceightD
+            pceightD,
+            signD
 
         );
 aludec ad(functD,opD,alucontrolD);

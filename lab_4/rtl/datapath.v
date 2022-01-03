@@ -35,6 +35,7 @@ module datapath(
            input wire jrD,
            input wire jalD,
            input wire pceightD,
+           input wire signD,
            //execute stage
            input wire memtoregE,
            input wire alusrcE,regdstE,
@@ -62,15 +63,17 @@ wire [31:0] pcnextjrFD;  //jr
 //decode stage
 wire [31:0] pcplus4D,instrD;
 wire forwardaD,forwardbD;
-wire [4:0] rsD,rtD,rdD;
+wire [4:0] rsD,rtD,rdD,saD;
 wire flushD,stallD;
 wire [31:0] signimmD,signimmshD;
 wire [31:0] srcaD,srca2D,srcbD,srcb2D;
 wire equalD;
 wire pcsrcD;
+wire [31:0] unsignimmD;
+wire [31:0] signorunsignD;
 //execute stage
 wire [1:0] forwardaE,forwardbE;
-wire [4:0] rsE,rtE,rdE;
+wire [4:0] rsE,rtE,rdE,saE;
 wire [4:0] writeregE;
 wire [31:0] signimmE;
 wire [31:0] srcaE,srca2E,srcbE,srcb2E,srcb3E;
@@ -88,7 +91,7 @@ wire [3:0] memwriteM1;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//鍐欏洖�?�楋�???锟藉崐�?�楋�???锟藉瓧鑺傛嫇�?????
+wire [31:0] readdataWB;//鍐欏洖�?�楋�???锟藉崐�?�楋�???锟藉瓧鑺傛嫇�?????
 
 //hazard detection
 hazard h(
@@ -121,7 +124,6 @@ mux2 #(32) jrmux(pcnextbrFD,srcaD,jrD,pcnextjrFD);
 mux2 #(32) pcmux(pcnextjrFD,
                  {pcplus4D[31:28],instrD[25:0],2'b00},
                  jumpD,pcnextFD);
-
 //regfile (operates in decode and writeback)
 regfile rf(clk,regwriteW,rsD,rtD,writeregW,resultW,srcaD,srcbD);
 
@@ -131,8 +133,14 @@ adder pcadd1(pcF,32'b100,pcplus4F);
 //decode stage
 flopenr #(32) r1D(clk,rst,~stallD,pcplus4F,pcplus4D);
 flopenrc #(32) r2D(clk,rst,~stallD,flushD,instrF,instrD);
+
 signext se(instrD[15:0],signimmD);
-sl2 immsh(signimmD,signimmshD);
+assign unsignimmD = {16'h0000,instrD[15:0]};
+mux2 #(32) signmux(unsignimmD,signimmD,signD,signorunsignD);
+
+
+
+sl2 immsh(signorunsignD,signimmshD);
 adder pcadd2(pcplus4D,signimmshD,pcbranchD);
 mux2 #(32) forwardamux(srcaD,aluoutM,forwardaD,srca2D);
 mux2 #(32) forwardbmux(srcbD,aluoutM,forwardbD,srcb2D);
@@ -244,11 +252,12 @@ assign functD = instrD[5:0];
 assign rsD = instrD[25:21];
 assign rtD = instrD[20:16];
 assign rdD = instrD[15:11];
+assign saD = instrD[10:6];
 
 //execute stage
 floprc #(32) r1E(clk,rst,flushE,srcaD,srcaE);
 floprc #(32) r2E(clk,rst,flushE,srcbD,srcbE);
-floprc #(32) r3E(clk,rst,flushE,signimmD,signimmE);
+floprc #(32) r3E(clk,rst,flushE,signorunsignD,signimmE);
 floprc #(5) r4E(clk,rst,flushE,rsD,rsE);
 floprc #(5) r5E(clk,rst,flushE,rtD,rtE);
 floprc #(5) r6E(clk,rst,flushE,rdD,rdE);
@@ -256,13 +265,14 @@ floprc #(4) r7E(clk,rst,flushE,memwriteD,memwriteE);
 floprc #(1) r8E(clk,rst,flushE,jalD,jalE);
 floprc #(32) r9E(clk,rst,flushE,pcplus4D,pcplus4E);
 floprc #(1) r10E(clk,rst,flushE,pceightD,pceightE);
+floprc #(5) r11E(clk,rst,flushE,saD,saE);
 
 assign pcplus8E = pcplus4E + 32'h0004;  //get pc+8
 
 mux3 #(32) forwardaemux(srcaE,resultW,aluoutM,forwardaE,srca2E);
 mux3 #(32) forwardbemux(srcbE,resultW,aluoutM,forwardbE,srcb2E);
 mux2 #(32) srcbmux(srcb2E,signimmE,alusrcE,srcb3E);
-alu alu(srca2E,srcb3E,alucontrolE,aluoutE);
+alu alu(srca2E,srcb3E,saE,alucontrolE,aluoutE);
 mux2 #(5) wrmux(rtE,rdE,regdstE,writeregE);
 mux2 #(32) aluEpc8Emux(aluoutE,pcplus8E,pceightE,aluoutE2);  //jal,bal,pc+8 or aluout
 mux2 #(5) jalbalmux(writeregE,5'b11111,jalE,writeregE2);  //jal,bal,31 or rt,rd
