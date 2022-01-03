@@ -55,6 +55,8 @@ begin
             y <= ((a[31] && !b[31])||(subr[31] && !(!a[31] && b[31])));
         `EXE_SLTU_OP:
             y <= (a<b);
+        `EXE_LUI_OP:
+            y <= {b[15:0],16'h0000};
         default:
             y <= 32'b0;
     endcase

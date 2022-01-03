@@ -19,49 +19,47 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 
-
+`include "defines.vh"
 module maindec(
            input wire[5:0] op,
-
            output wire memtoreg,
            output wire[3:0] memwrite,
            output wire branch,alusrc,
            output wire regdst,regwrite,
            output wire jump,
-           output wire[1:0] aluop,
            output wire[2:0] lshb
        );
-reg[14:0] controls;
-assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,aluop,lshb} = controls;
+reg[12:0] controls;
+assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,lshb} = controls;
 always @(*)
 begin
     case (op)
-        6'b000000:
-            controls <= 15'b110000000010100;//R-TYRE
-        6'b100000:
-            controls <= 15'b101000001000000;//lb
-        6'b100100:
-            controls <= 15'b101000001000001;//lbu
-        6'b100001:
-            controls <= 15'b101000001000010;//lh
-        6'b100101:
-            controls <= 15'b101000001000011;//lhu
-        6'b100011:
-            controls <= 15'b101000001000100;//LW
-        6'b101000:
-            controls <= 15'b001011110000101;//sb
-        6'b101001:
-            controls <= 15'b001011110000110;//sh
-        6'b101011:
-            controls <= 15'b001011110000111;//SW
-        6'b000100:
-            controls <= 15'b000100000001100;//BEQ
-        6'b001000:
-            controls <= 15'b101000000000100;//ADDI
-        6'b000010:
-            controls <= 15'b000000000100100;//J
+        `EXE_NOP:
+            controls <= 13'b1100000000100;//R-TYRE
+        `EXE_LB:
+            controls <= 13'b1010000010000;//lb
+        `EXE_LBU:
+            controls <= 13'b1010000010001;//lbu
+        `EXE_LH:
+            controls <= 13'b1010000010010;//lh
+        `EXE_LHU:
+            controls <= 13'b1010000010011;//lhu
+        `EXE_LW:
+            controls <= 13'b1010000010100;//LW
+        `EXE_SB:
+            controls <= 13'b0010111100101;//sb
+        `EXE_SH:
+            controls <= 13'b0010111100110;//sh
+        `EXE_SW:
+            controls <= 13'b0010111100111;//SW
+        `EXE_BEQ:
+            controls <= 13'b0001000000100;//BEQ
+        `EXE_ADDI,`EXE_ADDIU,`EXE_SLTI,`EXE_SLTIU,`EXE_ANDI,`EXE_XORI,`EXE_LUI,`EXE_ORI:
+            controls <= 13'b1010000000100;//I TYPE
+        `EXE_J:
+            controls <= 13'b0000000001100;//J
         default:
-            controls <= 15'b000000000000100;//illegal op
+            controls <= 13'b0000000000100;//illegal op
     endcase
 end
 endmodule

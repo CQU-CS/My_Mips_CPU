@@ -22,27 +22,13 @@
 `include "defines.vh"
 module aludec(
            input wire[5:0] funct,
-           input wire[1:0] aluop,
+           input wire[5:0] op,
            output reg[7:0] alucontrol
        );
 always @(*)
 begin
-    case (aluop)
-        // 2'b00: alucontrol <= 8'b00000010;//add (for lw/sw/addi)
-        // 2'b01: alucontrol <= 8'b00000110;//sub (for beq)
-        // default : case (funct)
-        // 	`EXE_ADD:alucontrol <= 8'b00000010; //add
-        // 	`EXE_SUB:alucontrol <= 8'b00000110; //sub
-        // 	`EXE_AND:alucontrol <= 8'b00000000; //and
-        // 	`EXE_OR:alucontrol <= 8'b00000001; //or
-        // 	`EXE_SLT:alucontrol <= 8'b00000111; //slt
-        // 	default:  alucontrol <= 8'b00000000;
-        // endcase
-        2'b00:
-            alucontrol <= `EXE_ADD_OP;//add (for lw/sw/addi)
-        2'b01:
-            alucontrol <= `EXE_SUB_OP;//sub (for beq)
-        default :
+    case (op)
+        `EXE_NOP:
         case (funct)
             `EXE_ADD:
                 alucontrol <= `EXE_ADD_OP; //add
@@ -62,11 +48,31 @@ begin
                 alucontrol <= `EXE_NOR_OP; //nor
             `EXE_SLT:
                 alucontrol <= `EXE_SLT_OP; //slt
-			`EXE_SLTU:
+            `EXE_SLTU:
                 alucontrol <= `EXE_SLTU_OP; //sltu
             default:
                 alucontrol <= `EXE_NOP_OP;
         endcase
+        `EXE_BEQ:
+            alucontrol <= `EXE_SUB_OP;//sub (for beq)
+		`EXE_ADDI:
+			alucontrol <= `EXE_ADD_OP;//add (for lw/sw/addi)
+		`EXE_ADDIU:
+			alucontrol <= `EXE_ADDU_OP;//addu (for addiu)
+		`EXE_SLTI:
+			alucontrol <= `EXE_SLT_OP;//addu (for slti)
+		`EXE_SLTIU:
+			alucontrol <= `EXE_SLTU_OP;//addu (for sltiu)
+		`EXE_ANDI:
+			alucontrol <= `EXE_AND_OP;//add (for andi)
+		`EXE_XORI:
+			alucontrol <= `EXE_XOR_OP;//addu (for xori)
+		`EXE_LUI:
+			alucontrol <= `EXE_LUI_OP;//addu (for lui)
+		`EXE_ORI:
+			alucontrol <= `EXE_OR_OP;//addu (for ori)
+        default:
+            alucontrol <= `EXE_ADD_OP;//add (for lw/sw/addi)
     endcase
 end
 endmodule

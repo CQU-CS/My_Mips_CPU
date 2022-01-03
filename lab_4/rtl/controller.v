@@ -24,9 +24,9 @@ module controller(
            input wire clk,rst,
            //decode stage
            input wire[5:0] opD,functD,
-//           output wire pcsrcD,
+           //           output wire pcsrcD,
            output wire branchD,
-//           output wire equalD,
+           //           output wire equalD,
            output wire jumpD,
            output wire[3:0] memwriteD,
 
@@ -47,7 +47,7 @@ module controller(
        );
 
 //decode stage
-wire[1:0] aluopD;
+// wire[1:0] aluopD;
 // wire memtoregD,memwriteD,alusrcD,
 //      regdstD,regwriteD;
 wire memtoregD,alusrcD,regdstD,regwriteD;
@@ -65,10 +65,9 @@ maindec md(
             branchD,alusrcD,
             regdstD,regwriteD,
             jumpD,
-            aluopD,
             lshbD
         );
-aludec ad(functD,aluopD,alucontrolD);
+aludec ad(functD,opD,alucontrolD);
 
 //assign pcsrcD = branchD & equalD;
 
