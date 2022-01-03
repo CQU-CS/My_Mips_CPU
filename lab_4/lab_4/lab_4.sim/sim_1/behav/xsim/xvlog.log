@@ -10,9 +10,9 @@ INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/alu
 INFO: [VRFC 10-311] analyzing module aludec
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module controller
-WARNING: [VRFC 10-3676] redeclaration of ansi port 'memwriteD' is not allowed [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:53]
-INFO: [VRFC 10-2458] undeclared symbol memwriteE, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:78]
-INFO: [VRFC 10-2458] undeclared symbol memwriteM, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:97]
+WARNING: [VRFC 10-3676] redeclaration of ansi port 'memwriteD' is not allowed [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:56]
+INFO: [VRFC 10-2458] undeclared symbol memwriteE, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:81]
+INFO: [VRFC 10-2458] undeclared symbol memwriteM, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/controller.v:100]
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/datapath.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module datapath
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/eqcmp.v" into library xil_defaultlib
@@ -31,8 +31,8 @@ INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/mai
 INFO: [VRFC 10-311] analyzing module maindec
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/mips.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module mips
-INFO: [VRFC 10-2458] undeclared symbol branchD, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/mips.v:47]
-INFO: [VRFC 10-2458] undeclared symbol jumpD, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/mips.v:47]
+INFO: [VRFC 10-2458] undeclared symbol branchD, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/mips.v:48]
+INFO: [VRFC 10-2458] undeclared symbol jumpD, assumed default net type wire [E:/VIVADO/My_Mips_CPU/lab_4/rtl/mips.v:50]
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/mux2.v" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module mux2
 INFO: [VRFC 10-2263] Analyzing Verilog file "E:/VIVADO/My_Mips_CPU/lab_4/rtl/mux3.v" into library xil_defaultlib

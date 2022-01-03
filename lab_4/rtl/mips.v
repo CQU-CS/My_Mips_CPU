@@ -44,7 +44,10 @@ controller c(
                clk,rst,
                //decode stage
                opD,functD,
-               pcsrcD,branchD,equalD,jumpD,memwriteD,
+//               pcsrcD,
+               branchD,
+//               equalD,
+               jumpD,memwriteD,
 
                //execute stage
                flushE,
@@ -64,9 +67,10 @@ datapath dp(
              pcF,
              instrF,
              //decode stage
-             pcsrcD,branchD,
+//             pcsrcD,
+             branchD,
              jumpD,
-             equalD,
+//             equalD,
              opD,functD,
              memwriteD,
              //execute stage

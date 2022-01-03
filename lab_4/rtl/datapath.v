@@ -26,9 +26,10 @@ module datapath(
            output wire[31:0] pcF,
            input wire[31:0] instrF,
            //decode stage
-           input wire pcsrcD,branchD,
+           //           input wire pcsrcD,
+           input wire branchD,
            input wire jumpD,
-           output wire equalD,
+           //           output wire equalD,
            output wire[5:0] opD,functD,
            input wire[3:0] memwriteD,
            //execute stage
@@ -61,6 +62,8 @@ wire [4:0] rsD,rtD,rdD;
 wire flushD,stallD;
 wire [31:0] signimmD,signimmshD;
 wire [31:0] srcaD,srca2D,srcbD,srcb2D;
+wire equalD;
+wire pcsrcD;
 //execute stage
 wire [1:0] forwardaE,forwardbE;
 wire [4:0] rsE,rtE,rdE;
@@ -75,7 +78,7 @@ wire [3:0] memwriteM1;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//鍐欏洖瀛楋拷?锟藉崐瀛楋拷?锟藉瓧鑺傛嫇锟???
+wire [31:0] readdataWB;//鍐欏洖�?�楋�??锟藉崐�?�楋�??锟藉瓧鑺傛嫇�????
 
 //hazard detection
 hazard h(
@@ -123,6 +126,107 @@ adder pcadd2(pcplus4D,signimmshD,pcbranchD);
 mux2 #(32) forwardamux(srcaD,aluoutM,forwardaD,srca2D);
 mux2 #(32) forwardbmux(srcbD,aluoutM,forwardbD,srcb2D);
 eqcmp comp(srca2D,srcb2D,equalD);
+//assign pcsrcD = branchD & equalD;
+
+//branch alu
+reg pcsrcTempD = 1'b0;
+always @(*)
+begin
+    case(opD)
+        //beq
+        6'b000100:
+        begin
+            if(srca2D==srcb2D)
+            begin
+                pcsrcTempD <= 1'b1;
+            end
+            else
+            begin
+                pcsrcTempD <= 1'b0;
+            end
+        end
+        //bgtz
+        6'b000111:
+        begin
+            if(srca2D>0)
+            begin
+                pcsrcTempD <= 1'b1;
+            end
+            else
+            begin
+                pcsrcTempD <= 1'b0;
+            end
+        end
+        //blez
+        6'b000110:
+        begin
+            if(srca2D<=0)
+            begin
+                pcsrcTempD <= 1'b1;
+            end
+            else
+            begin
+                pcsrcTempD <= 1'b0;
+            end
+        end
+        //bne
+        6'b000101:
+        begin
+            if(srca2D!=srcb2D)
+            begin
+                pcsrcTempD <= 1'b1;
+            end
+            else
+            begin
+                pcsrcTempD <= 1'b0;
+            end
+        end
+        //bltz,bltzal,bgez,bgezal
+        6'b000001:
+        begin
+            case(rtD)
+                //bltz
+                5'b00000:
+                begin
+                    if(srca2D<=0)
+                    begin
+                        pcsrcTempD <= 1'b1;
+                    end
+                    else
+                    begin
+                        pcsrcTempD <= 1'b0;
+                    end
+                end
+                //bltzal
+                5'b10000:
+                begin
+                end
+                //bgez
+                5'b00001:
+                begin
+                    if(srca2D>=0)
+                    begin
+                        pcsrcTempD <= 1'b1;
+                    end
+                    else
+                    begin
+                        pcsrcTempD <= 1'b0;
+                    end
+                end
+                //bgezal
+                5'b10001:
+                begin
+                end
+            endcase
+        end
+        default:
+        begin
+            pcsrcTempD <= 1'b0;
+        end
+    endcase
+end
+
+assign pcsrcD = pcsrcTempD;
 
 assign opD = instrD[31:26];
 assign functD = instrD[5:0];
@@ -196,7 +300,7 @@ begin
     endcase
 end
 
-assign memwriteM = memwriteM1;
+assign memwriteM =memwriteM1;
 //writeback stage
 flopr #(32) r1W(clk,rst,aluoutM,aluoutW);
 flopr #(32) r2W(clk,rst,readdataM,readdataW);
