@@ -58,9 +58,9 @@ begin
             controls <= 17'b00101111001110001;//SW
         `EXE_BEQ:
             controls <= 17'b00010000001000001;//BEQ
-        `EXE_ADDI,`EXE_ADDIU,`EXE_SLTI,`EXE_SLTIU,`EXE_ANDI,`EXE_XORI,`EXE_LUI:
+        `EXE_ADDI,`EXE_ADDIU,`EXE_SLTI,`EXE_SLTIU:
             controls <= 17'b10100000001000001;//I TYPE SIGNED
-        `EXE_ORI:
+        `EXE_ORI,`EXE_ANDI,`EXE_XORI,`EXE_LUI:
             controls <= 17'b10100000001000000;//I TYPE UNSIGNED
         `EXE_J:
             controls <= 17'b00000000011000001;//J
