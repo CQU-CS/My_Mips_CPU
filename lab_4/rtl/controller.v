@@ -33,6 +33,8 @@ module controller(
            output wire jalD,
            output wire pceightD,
            output wire signD,
+           output wire hilowriteD,
+           output wire hilotoregD,
 
            //execute stage
            input wire flushE,
@@ -73,7 +75,9 @@ maindec md(
             jrD,
             jalD,
             pceightD,
-            signD
+            signD,
+            hilowriteD,
+            hilotoregD
 
         );
 aludec ad(functD,opD,alucontrolD);

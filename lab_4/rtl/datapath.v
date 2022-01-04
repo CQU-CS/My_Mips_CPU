@@ -36,6 +36,8 @@ module datapath(
            input wire jalD,
            input wire pceightD,
            input wire signD,
+           input wire hilowriteD,
+           input wire hilotoregD,
            //execute stage
            input wire memtoregE,
            input wire alusrcE,regdstE,
@@ -85,14 +87,18 @@ wire [31:0] pcplus4E;
 wire [31:0] pcplus8E;
 wire [31:0] aluoutE2;
 wire [4:0] writeregE2;
+wire hilowriteE;
+wire hilotoregE;
 //mem stage
 wire [4:0] writeregM;
 wire [3:0] memwriteM1;
+wire hilowriteM;
+wire hilotoregM;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//鍐欏洖�?�楋�???锟藉崐�?�楋�???锟藉瓧鑺傛嫇�?????
-
+wire [31:0] readdataWB;//鍐欏洖�?�楋�????锟藉崐�?�楋�????锟藉瓧鑺傛嫇�??????
+wire hilotoregW;
 //hazard detection
 hazard h(
            //fetch stage
@@ -266,6 +272,8 @@ floprc #(1) r8E(clk,rst,flushE,jalD,jalE);
 floprc #(32) r9E(clk,rst,flushE,pcplus4D,pcplus4E);
 floprc #(1) r10E(clk,rst,flushE,pceightD,pceightE);
 floprc #(5) r11E(clk,rst,flushE,saD,saE);
+floprc #(1) r12E(clk,rst,flushE,hilowriteD,hilowriteE);
+floprc #(1) r13E(clk,rst,flushE,hilotoregD,hilotoregE);
 
 assign pcplus8E = pcplus4E + 32'h0004;  //get pc+8
 
@@ -282,6 +290,8 @@ flopr #(32) r1M(clk,rst,srcb2E,writedataM);
 flopr #(32) r2M(clk,rst,aluoutE2,aluoutM);
 flopr #(5) r3M(clk,rst,writeregE2,writeregM);
 flopr #(4) r4M(clk,rst,memwriteE,memwriteM1);
+flopr #(1) r5M(clk,rst,hilowriteE,hilowriteM);
+flopr #(1) r6M(clk,rst,hilotoregE,hilotoregM);
 //temp memwrite
 reg[3:0] memwriteTemp = 4'b0000;
 assign memwriteM = memwriteTemp;
@@ -333,6 +343,7 @@ assign memwriteM =memwriteM1;
 flopr #(32) r1W(clk,rst,aluoutM,aluoutW);
 flopr #(32) r2W(clk,rst,readdataM,readdataW);
 flopr #(5) r3W(clk,rst,writeregM,writeregW);
+flopr #(1) r4W(clk,rst,hilotoregM,hilotoregW);
 assign readdataWB = (lshbW==3'b000)?{{24{readdataW[31]}},readdataW[31:24]}:(lshbW==3'b001)?{{24{1'b0}},readdataW[31:24]}:(lshbW==3'b010)?{{16{readdataW[31]}},readdataW[31:16]}:(lshbW==3'b011)?{{16{1'b0}},readdataW[31:16]}:readdataW;
 //assign readdataWB = readdataW;
 mux2 #(32) resmux(aluoutW,readdataWB,memtoregW,resultW);

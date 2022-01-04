@@ -31,10 +31,12 @@ module maindec(
            output wire jr,
            output wire jal,
            output wire pceight,
-           output wire sign
+           output wire sign,
+           output wire hilowrite,
+           output wire hilotoreg
        );
-reg[16:0] controls;
-assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,lshb,jr,jal,pceight,sign} = controls;
+reg[18:0] controls;
+assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,lshb,jr,jal,pceight,sign,hilowrite,hilotoreg} = controls;
 always @(*)
 begin
     case (op)
