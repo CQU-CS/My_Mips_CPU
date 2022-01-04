@@ -58,7 +58,7 @@ begin
             controls <= 19'b0010_1111_0011_0000_100;//sh
         `EXE_SW:
             controls <= 19'b0010_1111_0011_1000_100;//SW
-        `EXE_BEQ:
+        `EXE_BEQ,`EXE_BNE,`EXE_BGTZ,`EXE_BLEZ,`EXE_BLTZ,`EXE_BGEZ:
             controls <= 19'b0001_0000_0010_0000_100;//BEQ
         `EXE_ADDI,`EXE_ADDIU,`EXE_SLTI,`EXE_SLTIU:
             controls <= 19'b1010_0000_0010_0000_100;//I TYPE SIGNED
