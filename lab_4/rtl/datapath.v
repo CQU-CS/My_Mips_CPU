@@ -31,6 +31,7 @@ module datapath(
            input wire jumpD,
            //           output wire equalD,
            output wire[5:0] opD,functD,
+           output wire[4:0] rt2D,
            input wire[3:0] memwriteD,
            input wire jrD,
            input wire jalD,
@@ -110,7 +111,7 @@ wire [31:0] lo_iM;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//鍐欏洖�?�楋�??????锟藉崐�?�楋�??????锟藉瓧鑺傛嫇�????????
+wire [31:0] readdataWB;//鍐欏洖�?�楋�??????锟藉崐�?�楋�??????锟藉瓧鑺傛嫇�????????
 wire hilotoregW;
 wire [31:0] hi_oW;
 wire [31:0] lo_oW;
@@ -274,6 +275,7 @@ assign rsD = instrD[25:21];
 assign rtD = instrD[20:16];
 assign rdD = instrD[15:11];
 assign saD = instrD[10:6];
+assign rt2D = instrD[20:16];
 
 //execute stage
 floprc #(32) r1E(clk,rst,flushE,srcaD,srcaE);

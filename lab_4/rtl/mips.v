@@ -30,6 +30,7 @@ module mips(
        );
 
 wire [5:0] opD,functD;
+wire [4:0] rtD;
 wire regdstE,alusrcE,pcsrcD,memtoregE,memtoregM,memtoregW,
      regwriteE,regwriteM,regwriteW;
 //璁垮瓨淇″彿
@@ -79,6 +80,7 @@ datapath dp(
              jumpD,
 //             equalD,
              opD,functD,
+             rtD,
              memwriteD,
              jrD,
              jalD,

@@ -24,6 +24,7 @@ module controller(
            input wire clk,rst,
            //decode stage
            input wire[5:0] opD,functD,
+           input wire[4:0] rtD,
            //           output wire pcsrcD,
            output wire branchD,
            //           output wire equalD,
@@ -69,6 +70,7 @@ wire[2:0] lshbE;
 maindec md(
             opD,
             functD,
+            rtD,
             memtoregD,memwriteD,
             branchD,alusrcD,
             regdstD,regwriteD,

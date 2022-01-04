@@ -23,6 +23,7 @@
 module maindec(
            input wire[5:0] op,
            input wire[5:0] funct,
+           input wire[4:0] rt,
            output wire memtoreg,
            output wire[3:0] memwrite,
            output wire branch,alusrc,
@@ -42,7 +43,7 @@ assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,lshb,jr,jal,pceight
 always @(*)
 begin
     case (op)
-        `EXE_NOP:
+        `EXE_SPECIAL_INST:
         begin
             case (funct)
                 `EXE_MFHI:
@@ -53,9 +54,13 @@ begin
                     controls <= 20'b0000_0000_0010_0000_0100;
                 `EXE_MTLO:
                     controls <= 20'b0000_0000_0010_0000_0100;
+                `EXE_JR:
+                    controls <= 20'b0000_0000_0010_0100_1000;
+                `EXE_JALR:
+                    controls <= 20'b0000_0000_0010_0111_1000;
                 default:
                     controls <= 20'b1100_0000_0010_0000_1000;//R-TYRE
-            endcase            
+            endcase
         end
         `EXE_LB:
             controls <= 20'b1010_0000_1000_0000_1000;//lb
@@ -73,14 +78,29 @@ begin
             controls <= 20'b0010_1111_0011_0000_1000;//sh
         `EXE_SW:
             controls <= 20'b0010_1111_0011_1000_1000;//SW
-        `EXE_BEQ,`EXE_BNE,`EXE_BGTZ,`EXE_BLEZ,`EXE_BLTZ,`EXE_BGEZ:
+        `EXE_BEQ,`EXE_BNE,`EXE_BGTZ,`EXE_BLEZ:
             controls <= 20'b0001_0000_0010_0000_1000;//BEQ
         `EXE_ADDI,`EXE_ADDIU,`EXE_SLTI,`EXE_SLTIU:
             controls <= 20'b1010_0000_0010_0000_1000;//I TYPE SIGNED
         `EXE_ORI,`EXE_ANDI,`EXE_XORI,`EXE_LUI:
             controls <= 20'b1010_0000_0010_0000_0000;//I TYPE UNSIGNED
         `EXE_J:
-            controls <= 20'b0000_0000_0110_0000_1000;//J        
+            controls <= 20'b0000_0000_0110_0000_1000;//J
+        `EXE_JAL:
+            controls <= 20'b0000_0000_0110_0011_1000;//Jal
+        `EXE_REGIMM_INST:
+        begin
+            case (rt)
+                `EXE_BLTZ:
+                    controls <= 20'b0001_0000_0010_0000_1000;
+                `EXE_BLTZAL:
+                    controls <= 20'b0001_0000_0010_0011_1000;
+                `EXE_BGEZ:
+                    controls <= 20'b0001_0000_0010_0000_1000;
+                `EXE_BGEZAL:
+                    controls <= 20'b0001_0000_0010_0011_1000;
+            endcase
+        end
         default:
             controls <= 20'b0000_0000_0010_0000_1000;//illegal op
     endcase
