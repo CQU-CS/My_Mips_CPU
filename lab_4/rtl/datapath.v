@@ -89,6 +89,8 @@ wire [31:0] aluoutE2;
 wire [4:0] writeregE2;
 wire hilowriteE;
 wire hilotoregE;
+wire [31:0] hi_oE;
+wire [31:0] lo_oE;
 //mem stage
 wire [4:0] writeregM;
 wire [3:0] memwriteM1;
@@ -97,11 +99,15 @@ wire hilotoregM;
 wire [31:0] writedataBM;
 wire [31:0] writedataHM;
 wire [31:0] writedataM2;
+wire [31:0] hi_oM;
+wire [31:0] lo_oM;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//鍐欏洖�?�楋�?????锟藉崐�?�楋�?????锟藉瓧鑺傛嫇�???????
+wire [31:0] readdataWB;//鍐欏洖�?�楋�?????锟藉崐�?�楋�?????锟藉瓧鑺傛嫇�???????
 wire hilotoregW;
+wire [31:0] hi_oW;
+wire [31:0] lo_oW;
 //hazard detection
 hazard h(
            //fetch stage
@@ -277,6 +283,8 @@ floprc #(1) r10E(clk,rst,flushE,pceightD,pceightE);
 floprc #(5) r11E(clk,rst,flushE,saD,saE);
 floprc #(1) r12E(clk,rst,flushE,hilowriteD,hilowriteE);
 floprc #(1) r13E(clk,rst,flushE,hilotoregD,hilotoregE);
+//hiloregfile
+hilo_reg hilo(clk,rst,hilowriteM,hi_iM,lo_iM,hi_oE,lo_oE);
 
 assign pcplus8E = pcplus4E + 32'h0004;  //get pc+8
 
@@ -295,6 +303,8 @@ flopr #(5) r3M(clk,rst,writeregE2,writeregM);
 flopr #(4) r4M(clk,rst,memwriteE,memwriteM1);
 flopr #(1) r5M(clk,rst,hilowriteE,hilowriteM);
 flopr #(1) r6M(clk,rst,hilotoregE,hilotoregM);
+flopr #(32) r7M(clk,rst,hi_oE,hi_oM);
+flopr #(32) r8M(clk,rst,lo_oE,lo_oM);
 
 assign writedataBM = {4{writedataM2[7:0]}};
 assign writedataHM = {2{writedataM2[15:0]}};
@@ -359,83 +369,108 @@ flopr #(32) r1W(clk,rst,aluoutM,aluoutW);
 flopr #(32) r2W(clk,rst,readdataM,readdataW);
 flopr #(5) r3W(clk,rst,writeregM,writeregW);
 flopr #(1) r4W(clk,rst,hilotoregM,hilotoregW);
+flopr #(32) r5W(clk,rst,hi_oM,hi_oW);
+flopr #(32) r6W(clk,rst,lo_oM,lo_oW);
 //load judge
 reg[31:0] readdatatemp = 32'b0;
-always @(*)begin
+always @(*)
+begin
     case(lshbW)
         //lb
-        3'b000:begin
+        3'b000:
+        begin
             case(aluoutW[1:0])
-                2'b00:begin
+                2'b00:
+                begin
                     readdatatemp <= {{24{readdataW[31]}},readdataW[31:24]};
                 end
-                2'b01:begin
+                2'b01:
+                begin
                     readdatatemp <= {{24{readdataW[23]}},readdataW[23:16]};
                 end
-                2'b10:begin
+                2'b10:
+                begin
                     readdatatemp <= {{24{readdataW[15]}},readdataW[15:8]};
                 end
-                2'b11:begin
+                2'b11:
+                begin
                     readdatatemp <= {{24{readdataW[7]}},readdataW[7:0]};
                 end
-                default:begin
+                default:
+                begin
                     readdatatemp <= readdataW;
                 end
             endcase
         end
         //lbu
-        3'b001:begin
+        3'b001:
+        begin
             case(aluoutW[1:0])
-                2'b00:begin
+                2'b00:
+                begin
                     readdatatemp <= {24'b0,readdataW[31:24]};
                 end
-                2'b01:begin
+                2'b01:
+                begin
                     readdatatemp <= {24'b0,readdataW[23:16]};
                 end
-                2'b10:begin
+                2'b10:
+                begin
                     readdatatemp <= {24'b0,readdataW[15:8]};
                 end
-                2'b11:begin
+                2'b11:
+                begin
                     readdatatemp <= {24'b0,readdataW[7:0]};
                 end
-                default:begin
+                default:
+                begin
                     readdatatemp <= readdataW;
                 end
             endcase
         end
         //lh
-        3'b010:begin
+        3'b010:
+        begin
             case(aluoutW[1])
-                1'b0:begin
+                1'b0:
+                begin
                     readdatatemp <= {{16{readdataW[31]}},readdataW[31:16]};
                 end
-                1'b1:begin
+                1'b1:
+                begin
                     readdatatemp <= {{16{readdataW[15]}},readdataW[15:0]};
                 end
-                default:begin
+                default:
+                begin
                     readdatatemp <= readdataW;
                 end
             endcase
         end
         //lhu
-        3'b011:begin
+        3'b011:
+        begin
             case(aluoutW[1])
-                1'b0:begin
+                1'b0:
+                begin
                     readdatatemp <= {16'b0,readdataW[31:16]};
                 end
-                1'b1:begin
+                1'b1:
+                begin
                     readdatatemp <= {16'b0,readdataW[15:0]};
                 end
-                default:begin
+                default:
+                begin
                     readdatatemp <= readdataW;
                 end
             endcase
         end
         //lw
-        3'b100:begin
+        3'b100:
+        begin
             readdatatemp<=readdataW;
         end
-        default:begin
+        default:
+        begin
             readdatatemp<=readdataW;
         end
     endcase
@@ -443,5 +478,6 @@ end
 assign readdataWB = readdatatemp;
 //assign readdataWB = (lshbW==3'b000)?{{24{readdataW[31]}},readdataW[31:24]}:(lshbW==3'b001)?{{24{1'b0}},readdataW[31:24]}:(lshbW==3'b010)?{{16{readdataW[31]}},readdataW[31:16]}:(lshbW==3'b011)?{{16{1'b0}},readdataW[31:16]}:readdataW;
 //assign readdataWB = readdataW;
-mux2 #(32) resmux(aluoutW,readdataWB,memtoregW,resultW);
+mux4 #(32) resmux4(aluoutW,hi_oW,readdataWB,lo_oW,{memtoregW,hilotoregW},resultW);
+//mux2 #(32) resmux(aluoutW,readdataWB,memtoregW,resultW);
 endmodule
