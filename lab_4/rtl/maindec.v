@@ -57,7 +57,7 @@ begin
                 `EXE_JR:
                     controls <= 20'b0000_0000_0010_0100_1000;
                 `EXE_JALR:
-                    controls <= 20'b0000_0000_0010_0111_1000;
+                    controls <= 20'b1000_0000_0010_0111_1000;
                 default:
                     controls <= 20'b1100_0000_0010_0000_1000;//R-TYRE
             endcase
@@ -87,18 +87,18 @@ begin
         `EXE_J:
             controls <= 20'b0000_0000_0110_0000_1000;//J
         `EXE_JAL:
-            controls <= 20'b0000_0000_0110_0011_1000;//Jal
+            controls <= 20'b1000_0000_0110_0011_1000;//Jal
         `EXE_REGIMM_INST:
         begin
             case (rt)
                 `EXE_BLTZ:
                     controls <= 20'b0001_0000_0010_0000_1000;
                 `EXE_BLTZAL:
-                    controls <= 20'b0001_0000_0010_0011_1000;
+                    controls <= 20'b1001_0000_0010_0011_1000;
                 `EXE_BGEZ:
                     controls <= 20'b0001_0000_0010_0000_1000;
                 `EXE_BGEZAL:
-                    controls <= 20'b0001_0000_0010_0011_1000;
+                    controls <= 20'b1001_0000_0010_0011_1000;
             endcase
         end
         default:

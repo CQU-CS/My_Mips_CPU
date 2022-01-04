@@ -111,7 +111,7 @@ wire [31:0] lo_iM;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//鍐欏洖�?�楋�??????锟藉崐�?�楋�??????锟藉瓧鑺傛嫇�????????
+wire [31:0] readdataWB;//鍐欏洖�?�楋�???????锟藉崐�?�楋�???????锟藉瓧鑺傛嫇�?????????
 wire hilotoregW;
 wire [31:0] hi_oW;
 wire [31:0] lo_oW;
@@ -241,6 +241,14 @@ begin
                 //bltzal
                 5'b10000:
                 begin
+                    if(srca2D<=0)
+                    begin
+                        pcsrcTempD <= 1'b1;
+                    end
+                    else
+                    begin
+                        pcsrcTempD <= 1'b0;
+                    end
                 end
                 //bgez
                 5'b00001:
@@ -257,6 +265,14 @@ begin
                 //bgezal
                 5'b10001:
                 begin
+                    if(srca2D>=0)
+                    begin
+                        pcsrcTempD <= 1'b1;
+                    end
+                    else
+                    begin
+                        pcsrcTempD <= 1'b0;
+                    end
                 end
             endcase
         end
