@@ -33,7 +33,7 @@ module maindec(
            output wire pceight
        );
 reg[15:0] controls;
-assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,lshb,jr,jal,pceight} = controls;
+assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,lshb,jr,jal,pceight,hilowrite,hilotoreg} = controls;
 always @(*)
 begin
     case (op)
