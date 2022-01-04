@@ -51,6 +51,7 @@ controller c(
                jrD,
                jalD,
                pceightD,
+               signD,
 
                //execute stage
                flushE,
@@ -79,6 +80,7 @@ datapath dp(
              jrD,
              jalD,
              pceightD,
+             signD,
              //execute stage
              memtoregE,
              alusrcE,regdstE,

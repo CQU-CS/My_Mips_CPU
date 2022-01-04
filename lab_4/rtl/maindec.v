@@ -30,39 +30,42 @@ module maindec(
            output wire[2:0] lshb,
            output wire jr,
            output wire jal,
-           output wire pceight
+           output wire pceight,
+           output wire sign
        );
-reg[15:0] controls;
-assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,lshb,jr,jal,pceight,hilowrite,hilotoreg} = controls;
+reg[16:0] controls;
+assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,lshb,jr,jal,pceight,sign} = controls;
 always @(*)
 begin
     case (op)
         `EXE_NOP:
-            controls <= 13'b1100000000100000;//R-TYRE
+            controls <= 17'b11000000001000001;//R-TYRE
         `EXE_LB:
-            controls <= 13'b1010000010000000;//lb
+            controls <= 17'b10100000100000001;//lb
         `EXE_LBU:
-            controls <= 13'b1010000010001000;//lbu
+            controls <= 17'b10100000100010001;//lbu
         `EXE_LH:
-            controls <= 13'b1010000010010000;//lh
+            controls <= 17'b10100000100100001;//lh
         `EXE_LHU:
-            controls <= 13'b1010000010011000;//lhu
+            controls <= 17'b10100000100110001;//lhu
         `EXE_LW:
-            controls <= 13'b1010000010100000;//LW
+            controls <= 17'b10100000101000001;//LW
         `EXE_SB:
-            controls <= 13'b0010111100101000;//sb
+            controls <= 17'b00101111001010001;//sb
         `EXE_SH:
-            controls <= 13'b0010111100110000;//sh
+            controls <= 17'b00101111001100001;//sh
         `EXE_SW:
-            controls <= 13'b0010111100111000;//SW
+            controls <= 17'b00101111001110001;//SW
         `EXE_BEQ:
-            controls <= 13'b0001000000100000;//BEQ
-        `EXE_ADDI,`EXE_ADDIU,`EXE_SLTI,`EXE_SLTIU,`EXE_ANDI,`EXE_XORI,`EXE_LUI,`EXE_ORI:
-            controls <= 13'b1010000000100000;//I TYPE
+            controls <= 17'b00010000001000001;//BEQ
+        `EXE_ADDI,`EXE_ADDIU,`EXE_SLTI,`EXE_SLTIU:
+            controls <= 17'b10100000001000001;//I TYPE SIGNED
+        `EXE_ORI,`EXE_ANDI,`EXE_XORI,`EXE_LUI:
+            controls <= 17'b10100000001000000;//I TYPE UNSIGNED
         `EXE_J:
-            controls <= 13'b0000000001100000;//J
+            controls <= 17'b00000000011000001;//J
         default:
-            controls <= 13'b0000000000100000;//illegal op
+            controls <= 17'b00000000001000001;//illegal op
     endcase
 end
 endmodule

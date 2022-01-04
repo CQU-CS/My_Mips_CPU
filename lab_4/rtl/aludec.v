@@ -50,6 +50,18 @@ begin
                 alucontrol <= `EXE_SLT_OP; //slt
             `EXE_SLTU:
                 alucontrol <= `EXE_SLTU_OP; //sltu
+			`EXE_SLL:
+				alucontrol <= `EXE_SLL_OP; //sll
+			`EXE_SRL:
+				alucontrol <= `EXE_SRL_OP; //srl
+			`EXE_SRA:
+				alucontrol <= `EXE_SRA_OP; //sra
+			`EXE_SLLV:
+				alucontrol <= `EXE_SLLV_OP; //sllv
+			`EXE_SRLV:
+				alucontrol <= `EXE_SRLV_OP; //srlv
+			`EXE_SRAV:
+				alucontrol <= `EXE_SRAV_OP; //srav
             default:
                 alucontrol <= `EXE_NOP_OP;
         endcase
