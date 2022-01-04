@@ -33,41 +33,42 @@ module maindec(
            output wire pceight,
            output wire sign,
            output wire hilowrite,
-           output wire hilotoreg
+           output wire hilotoreg,
+           output wire hiloalu
        );
-reg[18:0] controls;
-assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,lshb,jr,jal,pceight,sign,hilowrite,hilotoreg} = controls;
+reg[19:0] controls;
+assign {regwrite,regdst,alusrc,branch,memwrite,memtoreg,jump,lshb,jr,jal,pceight,sign,hilowrite,hilotoreg,hiloalu} = controls;
 always @(*)
 begin
     case (op)
         `EXE_NOP:
-            controls <= 19'b1100_0000_0010_0000_100;//R-TYRE
+            controls <= 19'b1100_0000_0010_0000_1000;//R-TYRE
         `EXE_LB:
-            controls <= 19'b1010_0000_1000_0000_100;//lb
+            controls <= 19'b1010_0000_1000_0000_1000;//lb
         `EXE_LBU:
-            controls <= 19'b1010_0000_1000_1000_100;//lbu
+            controls <= 19'b1010_0000_1000_1000_1000;//lbu
         `EXE_LH:
-            controls <= 19'b1010_0000_1001_0000_100;//lh
+            controls <= 19'b1010_0000_1001_0000_1000;//lh
         `EXE_LHU:
-            controls <= 19'b1010_0000_1001_1000_100;//lhu
+            controls <= 19'b1010_0000_1001_1000_1000;//lhu
         `EXE_LW:
-            controls <= 19'b1010_0000_1010_0000_100;//LW
+            controls <= 19'b1010_0000_1010_0000_1000;//LW
         `EXE_SB:
-            controls <= 19'b0010_1111_0010_1000_100;//sb
+            controls <= 19'b0010_1111_0010_1000_1000;//sb
         `EXE_SH:
-            controls <= 19'b0010_1111_0011_0000_100;//sh
+            controls <= 19'b0010_1111_0011_0000_1000;//sh
         `EXE_SW:
-            controls <= 19'b0010_1111_0011_1000_100;//SW
+            controls <= 19'b0010_1111_0011_1000_1000;//SW
         `EXE_BEQ,`EXE_BNE,`EXE_BGTZ,`EXE_BLEZ,`EXE_BLTZ,`EXE_BGEZ:
-            controls <= 19'b0001_0000_0010_0000_100;//BEQ
+            controls <= 19'b0001_0000_0010_0000_1000;//BEQ
         `EXE_ADDI,`EXE_ADDIU,`EXE_SLTI,`EXE_SLTIU:
-            controls <= 19'b1010_0000_0010_0000_100;//I TYPE SIGNED
+            controls <= 19'b1010_0000_0010_0000_1000;//I TYPE SIGNED
         `EXE_ORI,`EXE_ANDI,`EXE_XORI,`EXE_LUI:
-            controls <= 19'b1010_0000_0010_0000_000;//I TYPE UNSIGNED
+            controls <= 19'b1010_0000_0010_0000_0000;//I TYPE UNSIGNED
         `EXE_J:
-            controls <= 19'b0000_0000_0110_0000_100;//J
+            controls <= 19'b0000_0000_0110_0000_1000;//J
         default:
-            controls <= 19'b0000_0000_0010_0000_100;//illegal op
+            controls <= 19'b0000_0000_0010_0000_1000;//illegal op
     endcase
 end
 endmodule

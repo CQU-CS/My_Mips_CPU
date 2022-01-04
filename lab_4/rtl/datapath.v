@@ -38,6 +38,7 @@ module datapath(
            input wire signD,
            input wire hilowriteD,
            input wire hilotoregD,
+           input wire hiloaluD,
            //execute stage
            input wire memtoregE,
            input wire alusrcE,regdstE,
@@ -91,6 +92,7 @@ wire hilowriteE;
 wire hilotoregE;
 wire [31:0] hi_oE;
 wire [31:0] lo_oE;
+wire hiloaluE;
 //mem stage
 wire [4:0] writeregM;
 wire [3:0] memwriteM1;
@@ -101,10 +103,14 @@ wire [31:0] writedataHM;
 wire [31:0] writedataM2;
 wire [31:0] hi_oM;
 wire [31:0] lo_oM;
+wire [31:0] srcaM;
+wire hiloaluM;
+wire [31:0] hi_iM;
+wire [31:0] lo_iM;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//鍐欏洖�?�楋�?????锟藉崐�?�楋�?????锟藉瓧鑺傛嫇�???????
+wire [31:0] readdataWB;//鍐欏洖�?�楋�??????锟藉崐�?�楋�??????锟藉瓧鑺傛嫇�????????
 wire hilotoregW;
 wire [31:0] hi_oW;
 wire [31:0] lo_oW;
@@ -283,6 +289,7 @@ floprc #(1) r10E(clk,rst,flushE,pceightD,pceightE);
 floprc #(5) r11E(clk,rst,flushE,saD,saE);
 floprc #(1) r12E(clk,rst,flushE,hilowriteD,hilowriteE);
 floprc #(1) r13E(clk,rst,flushE,hilotoregD,hilotoregE);
+floprc #(1) r14E(clk,rst,flushE,hiloaluD,hiloaluE);
 //hiloregfile
 hilo_reg hilo(clk,rst,hilowriteM,hi_iM,lo_iM,hi_oE,lo_oE);
 
@@ -305,6 +312,11 @@ flopr #(1) r5M(clk,rst,hilowriteE,hilowriteM);
 flopr #(1) r6M(clk,rst,hilotoregE,hilotoregM);
 flopr #(32) r7M(clk,rst,hi_oE,hi_oM);
 flopr #(32) r8M(clk,rst,lo_oE,lo_oM);
+flopr #(32) r9M(clk,rst,srcaE,srcaM);
+flopr #(1) r10M(clk,rst,flushE,hiloaluE,hiloaluM);
+//hilo write from alu or rs
+assign hi_iM = hiloaluM?32'hffffeeee:srcaM;
+assign lo_iM = hiloaluM?32'hffffeeee:srcaM;
 
 assign writedataBM = {4{writedataM2[7:0]}};
 assign writedataHM = {2{writedataM2[15:0]}};

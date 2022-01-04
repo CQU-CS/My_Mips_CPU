@@ -54,6 +54,7 @@ controller c(
                signD,
                hilowriteD,
                hilotoregD,
+               hiloaluD,
 
                //execute stage
                flushE,
@@ -85,6 +86,7 @@ datapath dp(
              signD,
              hilowriteD,
              hilotoregD,
+             hiloaluD,
              //execute stage
              memtoregE,
              alusrcE,regdstE,
