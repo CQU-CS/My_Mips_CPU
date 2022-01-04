@@ -22,6 +22,7 @@
 `include "defines.vh"
 module maindec(
            input wire[5:0] op,
+           input wire[5:0] funct,
            output wire memtoreg,
            output wire[3:0] memwrite,
            output wire branch,alusrc,
@@ -42,33 +43,46 @@ always @(*)
 begin
     case (op)
         `EXE_NOP:
-            controls <= 19'b1100_0000_0010_0000_1000;//R-TYRE
+        begin
+            case (funct)
+                `EXE_MFHI:
+                    controls <= 20'b1100_0000_0010_0000_0010;
+                `EXE_MFLO:
+                    controls <= 20'b1100_0000_1010_0000_0010;
+                `EXE_MTHI:
+                    controls <= 20'b0000_0000_0010_0000_0100;
+                `EXE_MTLO:
+                    controls <= 20'b0000_0000_0010_0000_0100;
+                default:
+                    controls <= 20'b1100_0000_0010_0000_1000;//R-TYRE
+            endcase            
+        end
         `EXE_LB:
-            controls <= 19'b1010_0000_1000_0000_1000;//lb
+            controls <= 20'b1010_0000_1000_0000_1000;//lb
         `EXE_LBU:
-            controls <= 19'b1010_0000_1000_1000_1000;//lbu
+            controls <= 20'b1010_0000_1000_1000_1000;//lbu
         `EXE_LH:
-            controls <= 19'b1010_0000_1001_0000_1000;//lh
+            controls <= 20'b1010_0000_1001_0000_1000;//lh
         `EXE_LHU:
-            controls <= 19'b1010_0000_1001_1000_1000;//lhu
+            controls <= 20'b1010_0000_1001_1000_1000;//lhu
         `EXE_LW:
-            controls <= 19'b1010_0000_1010_0000_1000;//LW
+            controls <= 20'b1010_0000_1010_0000_1000;//LW
         `EXE_SB:
-            controls <= 19'b0010_1111_0010_1000_1000;//sb
+            controls <= 20'b0010_1111_0010_1000_1000;//sb
         `EXE_SH:
-            controls <= 19'b0010_1111_0011_0000_1000;//sh
+            controls <= 20'b0010_1111_0011_0000_1000;//sh
         `EXE_SW:
-            controls <= 19'b0010_1111_0011_1000_1000;//SW
+            controls <= 20'b0010_1111_0011_1000_1000;//SW
         `EXE_BEQ,`EXE_BNE,`EXE_BGTZ,`EXE_BLEZ,`EXE_BLTZ,`EXE_BGEZ:
-            controls <= 19'b0001_0000_0010_0000_1000;//BEQ
+            controls <= 20'b0001_0000_0010_0000_1000;//BEQ
         `EXE_ADDI,`EXE_ADDIU,`EXE_SLTI,`EXE_SLTIU:
-            controls <= 19'b1010_0000_0010_0000_1000;//I TYPE SIGNED
+            controls <= 20'b1010_0000_0010_0000_1000;//I TYPE SIGNED
         `EXE_ORI,`EXE_ANDI,`EXE_XORI,`EXE_LUI:
-            controls <= 19'b1010_0000_0010_0000_0000;//I TYPE UNSIGNED
+            controls <= 20'b1010_0000_0010_0000_0000;//I TYPE UNSIGNED
         `EXE_J:
-            controls <= 19'b0000_0000_0110_0000_1000;//J
+            controls <= 20'b0000_0000_0110_0000_1000;//J        
         default:
-            controls <= 19'b0000_0000_0010_0000_1000;//illegal op
+            controls <= 20'b0000_0000_0010_0000_1000;//illegal op
     endcase
 end
 endmodule

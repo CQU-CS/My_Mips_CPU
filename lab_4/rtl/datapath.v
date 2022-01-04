@@ -313,7 +313,7 @@ flopr #(1) r6M(clk,rst,hilotoregE,hilotoregM);
 flopr #(32) r7M(clk,rst,hi_oE,hi_oM);
 flopr #(32) r8M(clk,rst,lo_oE,lo_oM);
 flopr #(32) r9M(clk,rst,srcaE,srcaM);
-flopr #(1) r10M(clk,rst,flushE,hiloaluE,hiloaluM);
+flopr #(1) r10M(clk,rst,hiloaluE,hiloaluM);
 //hilo write from alu or rs
 assign hi_iM = hiloaluM?32'hffffeeee:srcaM;
 assign lo_iM = hiloaluM?32'hffffeeee:srcaM;
