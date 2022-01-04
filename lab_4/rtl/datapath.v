@@ -91,7 +91,7 @@ wire [3:0] memwriteM1;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//鍐欏洖�?�楋�???锟藉崐�?�楋�???锟藉瓧鑺傛嫇�?????
+wire [31:0] readdataWB;//鍐欏洖�?�楋�????锟藉崐�?�楋�????锟藉瓧鑺傛嫇�??????
 
 //hazard detection
 hazard h(
@@ -310,13 +310,13 @@ begin
         begin
             case(aluoutM[1:0])
                 2'b00:
-                    memwriteTemp <= 4'b1000;
-                2'b01:
-                    memwriteTemp <= 4'b0100;
-                2'b10:
-                    memwriteTemp <= 4'b0010;
-                2'b11:
                     memwriteTemp <= 4'b0001;
+                2'b01:
+                    memwriteTemp <= 4'b0010;
+                2'b10:
+                    memwriteTemp <= 4'b0100;
+                2'b11:
+                    memwriteTemp <= 4'b1000;
                 default:
                     memwriteTemp <= 4'b0000;
             endcase
@@ -328,7 +328,7 @@ begin
     endcase
 end
 
-assign memwriteM =memwriteM1;
+//assign memwriteM =memwriteM1;
 //writeback stage
 flopr #(32) r1W(clk,rst,aluoutM,aluoutW);
 flopr #(32) r2W(clk,rst,readdataM,readdataW);
