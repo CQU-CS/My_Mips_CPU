@@ -100,7 +100,7 @@ wire [31:0] writedataM2;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//鍐欏洖�?�楋�????锟藉崐�?�楋�????锟藉瓧鑺傛嫇�??????
+wire [31:0] readdataWB;//鍐欏洖�?�楋�?????锟藉崐�?�楋�?????锟藉瓧鑺傛嫇�???????
 wire hilotoregW;
 //hazard detection
 hazard h(
@@ -359,7 +359,89 @@ flopr #(32) r1W(clk,rst,aluoutM,aluoutW);
 flopr #(32) r2W(clk,rst,readdataM,readdataW);
 flopr #(5) r3W(clk,rst,writeregM,writeregW);
 flopr #(1) r4W(clk,rst,hilotoregM,hilotoregW);
-assign readdataWB = (lshbW==3'b000)?{{24{readdataW[31]}},readdataW[31:24]}:(lshbW==3'b001)?{{24{1'b0}},readdataW[31:24]}:(lshbW==3'b010)?{{16{readdataW[31]}},readdataW[31:16]}:(lshbW==3'b011)?{{16{1'b0}},readdataW[31:16]}:readdataW;
+//load judge
+reg[31:0] readdatatemp = 32'b0;
+always @(*)begin
+    case(lshbW)
+        //lb
+        3'b000:begin
+            case(aluoutW[1:0])
+                2'b00:begin
+                    readdatatemp <= {{24{readdataW[31]}},readdataW[31:24]};
+                end
+                2'b01:begin
+                    readdatatemp <= {{24{readdataW[23]}},readdataW[23:16]};
+                end
+                2'b10:begin
+                    readdatatemp <= {{24{readdataW[15]}},readdataW[15:8]};
+                end
+                2'b11:begin
+                    readdatatemp <= {{24{readdataW[7]}},readdataW[7:0]};
+                end
+                default:begin
+                    readdatatemp <= readdataW;
+                end
+            endcase
+        end
+        //lbu
+        3'b001:begin
+            case(aluoutW[1:0])
+                2'b00:begin
+                    readdatatemp <= {24'b0,readdataW[31:24]};
+                end
+                2'b01:begin
+                    readdatatemp <= {24'b0,readdataW[23:16]};
+                end
+                2'b10:begin
+                    readdatatemp <= {24'b0,readdataW[15:8]};
+                end
+                2'b11:begin
+                    readdatatemp <= {24'b0,readdataW[7:0]};
+                end
+                default:begin
+                    readdatatemp <= readdataW;
+                end
+            endcase
+        end
+        //lh
+        3'b010:begin
+            case(aluoutW[1])
+                1'b0:begin
+                    readdatatemp <= {{16{readdataW[31]}},readdataW[31:16]};
+                end
+                1'b1:begin
+                    readdatatemp <= {{16{readdataW[15]}},readdataW[15:0]};
+                end
+                default:begin
+                    readdatatemp <= readdataW;
+                end
+            endcase
+        end
+        //lhu
+        3'b011:begin
+            case(aluoutW[1])
+                1'b0:begin
+                    readdatatemp <= {16'b0,readdataW[31:16]};
+                end
+                1'b1:begin
+                    readdatatemp <= {16'b0,readdataW[15:0]};
+                end
+                default:begin
+                    readdatatemp <= readdataW;
+                end
+            endcase
+        end
+        //lw
+        3'b100:begin
+            readdatatemp<=readdataW;
+        end
+        default:begin
+            readdatatemp<=readdataW;
+        end
+    endcase
+end
+assign readdataWB = readdatatemp;
+//assign readdataWB = (lshbW==3'b000)?{{24{readdataW[31]}},readdataW[31:24]}:(lshbW==3'b001)?{{24{1'b0}},readdataW[31:24]}:(lshbW==3'b010)?{{16{readdataW[31]}},readdataW[31:16]}:(lshbW==3'b011)?{{16{1'b0}},readdataW[31:16]}:readdataW;
 //assign readdataWB = readdataW;
 mux2 #(32) resmux(aluoutW,readdataWB,memtoregW,resultW);
 endmodule
