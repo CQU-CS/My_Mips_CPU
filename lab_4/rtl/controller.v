@@ -85,12 +85,12 @@ aludec ad(functD,opD,alucontrolD);
 //assign pcsrcD = branchD & equalD;
 
 //pipeline registers
-floprc #(13) regE(
+floprc #(12) regE(
            clk,
            rst,
            flushE,
-           {memtoregD,memwriteD,alusrcD,regdstD,regwriteD,alucontrolD},
-           {memtoregD,memwriteE,alusrcE,regdstE,regwriteE,alucontrolE}
+           {memwriteD,alusrcD,regdstD,regwriteD,alucontrolD},
+           {memwriteE,alusrcE,regdstE,regwriteE,alucontrolE}
        );
 floprc #(3) regE2(
            clk,

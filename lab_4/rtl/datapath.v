@@ -94,10 +94,13 @@ wire [4:0] writeregM;
 wire [3:0] memwriteM1;
 wire hilowriteM;
 wire hilotoregM;
+wire [31:0] writedataBM;
+wire [31:0] writedataHM;
+wire [31:0] writedataM2;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//鍐欏洖�?�楋�????锟藉崐�?�楋�????锟藉瓧鑺傛嫇�??????
+wire [31:0] readdataWB;//鍐欏洖�?�楋�????锟藉崐�?�楋�????锟藉瓧鑺傛嫇�??????
 wire hilotoregW;
 //hazard detection
 hazard h(
@@ -286,15 +289,22 @@ mux2 #(32) aluEpc8Emux(aluoutE,pcplus8E,pceightE,aluoutE2);  //jal,bal,pc+8 or a
 mux2 #(5) jalbalmux(writeregE,5'b11111,jalE,writeregE2);  //jal,bal,31 or rt,rd
 
 //mem stage
-flopr #(32) r1M(clk,rst,srcb2E,writedataM);
+flopr #(32) r1M(clk,rst,srcb2E,writedataM2);
 flopr #(32) r2M(clk,rst,aluoutE2,aluoutM);
 flopr #(5) r3M(clk,rst,writeregE2,writeregM);
 flopr #(4) r4M(clk,rst,memwriteE,memwriteM1);
 flopr #(1) r5M(clk,rst,hilowriteE,hilowriteM);
 flopr #(1) r6M(clk,rst,hilotoregE,hilotoregM);
+
+assign writedataBM = {4{writedataM2[7:0]}};
+assign writedataHM = {2{writedataM2[15:0]}};
+reg[31:0] writedatatempM = 32'h0;
+assign writedataM = writedatatempM;
+
 //temp memwrite
 reg[3:0] memwriteTemp = 4'b0000;
 assign memwriteM = memwriteTemp;
+//assign memwriteM = 4'b1111;
 always @(*)
 begin
     case(lshbM)
@@ -302,6 +312,7 @@ begin
         3'b111:
         begin
             memwriteTemp <= 4'b1111;
+            writedatatempM <= writedataM2;
         end
         //sh
         3'b110:
@@ -314,10 +325,12 @@ begin
                 default:
                     memwriteTemp <= 4'b0000;
             endcase
+            writedatatempM <= writedataHM;
         end
         //sb
         3'b101:
         begin
+            //memwriteTemp <= 4'b1111;
             case(aluoutM[1:0])
                 2'b00:
                     memwriteTemp <= 4'b1000;
@@ -330,15 +343,17 @@ begin
                 default:
                     memwriteTemp <= 4'b0000;
             endcase
+            writedatatempM <= writedataBM;
         end
         default:
         begin
             memwriteTemp <= 4'b0000;
+            writedatatempM <= writedataM2;
         end
     endcase
 end
 
-assign memwriteM =memwriteM1;
+//assign memwriteM =memwriteM1;
 //writeback stage
 flopr #(32) r1W(clk,rst,aluoutM,aluoutW);
 flopr #(32) r2W(clk,rst,readdataM,readdataW);
