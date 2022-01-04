@@ -41,33 +41,33 @@ always @(*)
 begin
     case (op)
         `EXE_NOP:
-            controls <= 17'b11000000001000001;//R-TYRE
+            controls <= 19'b1100000000100000100;//R-TYRE
         `EXE_LB:
-            controls <= 17'b10100000100000001;//lb
+            controls <= 19'b1010000010000000100;//lb
         `EXE_LBU:
-            controls <= 17'b10100000100010001;//lbu
+            controls <= 19'b1010000010001000100;//lbu
         `EXE_LH:
-            controls <= 17'b10100000100100001;//lh
+            controls <= 19'b1010000010010000100;//lh
         `EXE_LHU:
-            controls <= 17'b10100000100110001;//lhu
+            controls <= 19'b1010000010011000100;//lhu
         `EXE_LW:
-            controls <= 17'b10100000101000001;//LW
+            controls <= 19'b1010000010100000100;//LW
         `EXE_SB:
-            controls <= 17'b00101111001010001;//sb
+            controls <= 19'b0010111100101000100;//sb
         `EXE_SH:
-            controls <= 17'b00101111001100001;//sh
+            controls <= 19'b0010111100110000100;//sh
         `EXE_SW:
-            controls <= 17'b00101111001110001;//SW
+            controls <= 19'b0010111100111000100;//SW
         `EXE_BEQ:
-            controls <= 17'b00010000001000001;//BEQ
+            controls <= 19'b0001000000100000100;//BEQ
         `EXE_ADDI,`EXE_ADDIU,`EXE_SLTI,`EXE_SLTIU:
-            controls <= 17'b10100000001000001;//I TYPE SIGNED
+            controls <= 19'b1010000000100000100;//I TYPE SIGNED
         `EXE_ORI,`EXE_ANDI,`EXE_XORI,`EXE_LUI:
-            controls <= 17'b10100000001000000;//I TYPE UNSIGNED
+            controls <= 19'b1010000000100000000;//I TYPE UNSIGNED
         `EXE_J:
-            controls <= 17'b00000000011000001;//J
+            controls <= 19'b0000000001100000100;//J
         default:
-            controls <= 17'b00000000001000001;//illegal op
+            controls <= 19'b0000000000100000100;//illegal op
     endcase
 end
 endmodule
