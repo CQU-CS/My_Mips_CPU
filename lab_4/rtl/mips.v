@@ -44,7 +44,7 @@ wire flushE,equalD;
 controller c(
                clk,rst,
                //decode stage
-               opD,functD,
+               opD,functD,rtD,
 //               pcsrcD,
                branchD,
 //               equalD,
