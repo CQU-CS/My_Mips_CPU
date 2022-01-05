@@ -46,6 +46,7 @@ module datapath(
            input wire regwriteE,
            input wire[7:0] alucontrolE,
            output wire flushE,
+           output wire stallE,
            //mem stage
            input wire memtoregM,
            input wire regwriteM,
@@ -94,6 +95,7 @@ wire hilotoregE;
 wire [31:0] hi_oE;
 wire [31:0] lo_oE;
 wire hiloaluE;
+//wire stallE;
 //mem stage
 wire [4:0] writeregM;
 wire [3:0] memwriteM1;
@@ -131,6 +133,7 @@ hazard h(
            memtoregE,
            forwardaE,forwardbE,
            flushE,
+           stallE,
            //mem stage
            writeregM,
            regwriteM,
@@ -294,20 +297,21 @@ assign saD = instrD[10:6];
 assign rt2D = instrD[20:16];
 
 //execute stage
-floprc #(32) r1E(clk,rst,flushE,srcaD,srcaE);
-floprc #(32) r2E(clk,rst,flushE,srcbD,srcbE);
-floprc #(32) r3E(clk,rst,flushE,signorunsignD,signimmE);
-floprc #(5) r4E(clk,rst,flushE,rsD,rsE);
-floprc #(5) r5E(clk,rst,flushE,rtD,rtE);
-floprc #(5) r6E(clk,rst,flushE,rdD,rdE);
-floprc #(4) r7E(clk,rst,flushE,memwriteD,memwriteE);
-floprc #(1) r8E(clk,rst,flushE,jalD,jalE);
-floprc #(32) r9E(clk,rst,flushE,pcplus4D,pcplus4E);
-floprc #(1) r10E(clk,rst,flushE,pceightD,pceightE);
-floprc #(5) r11E(clk,rst,flushE,saD,saE);
-floprc #(1) r12E(clk,rst,flushE,hilowriteD,hilowriteE);
-floprc #(1) r13E(clk,rst,flushE,hilotoregD,hilotoregE);
-floprc #(1) r14E(clk,rst,flushE,hiloaluD,hiloaluE);
+flopenrc #(32) r1E(clk,rst,~stallE,flushE,srcaD,srcaE);
+flopenrc #(32) r2E(clk,rst,~stallE,flushE,srcbD,srcbE);
+flopenrc #(32) r3E(clk,rst,~stallE,flushE,signorunsignD,signimmE);
+flopenrc #(5) r4E(clk,rst,~stallE,flushE,rsD,rsE);
+flopenrc #(5) r5E(clk,rst,~stallE,flushE,rtD,rtE);
+flopenrc #(5) r6E(clk,rst,~stallE,flushE,rdD,rdE);
+flopenrc #(4) r7E(clk,rst,~stallE,flushE,memwriteD,memwriteE);
+flopenrc #(1) r8E(clk,rst,~stallE,flushE,jalD,jalE);
+flopenrc #(32) r9E(clk,rst,~stallE,flushE,pcplus4D,pcplus4E);
+flopenrc #(1) r10E(clk,rst,~stallE,flushE,pceightD,pceightE);
+flopenrc #(5) r11E(clk,rst,~stallE,flushE,saD,saE);
+flopenrc #(1) r12E(clk,rst,~stallE,flushE,hilowriteD,hilowriteE);
+flopenrc #(1) r13E(clk,rst,~stallE,flushE,hilotoregD,hilotoregE);
+flopenrc #(1) r14E(clk,rst,~stallE,flushE,hiloaluD,hiloaluE);
+
 //hiloregfile
 hilo_reg hilo(clk,rst,hilowriteM,hi_iM,lo_iM,hi_oE,lo_oE);
 

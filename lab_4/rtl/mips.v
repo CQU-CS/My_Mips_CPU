@@ -62,6 +62,7 @@ controller c(
                memtoregE,alusrcE,
                regdstE,regwriteE,
                alucontrolE,
+               stallE,
 
                //mem stage
                memtoregM,
@@ -95,6 +96,7 @@ datapath dp(
              regwriteE,
              alucontrolE,
              flushE,
+             stallE,
              //mem stage
              memtoregM,
              regwriteM,
