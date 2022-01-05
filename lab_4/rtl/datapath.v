@@ -96,7 +96,7 @@ wire [31:0] hi_oE;
 wire [31:0] lo_oE;
 wire hiloaluE;
 wire [63:0] hilo_out;
-wire stall_div,zero,overflow;
+wire div_stallE,zero,overflow;
 //mem stage
 wire [4:0] writeregM;
 wire [3:0] memwriteM1;
@@ -135,6 +135,7 @@ hazard h(
            forwardaE,forwardbE,
            flushE,
            stallE,
+           div_stallE,
            //mem stage
            writeregM,
            regwriteM,
@@ -321,7 +322,7 @@ assign pcplus8E = pcplus4E + 32'h0004;  //get pc+8
 mux3 #(32) forwardaemux(srcaE,resultW,aluoutM,forwardaE,srca2E);
 mux3 #(32) forwardbemux(srcbE,resultW,aluoutM,forwardbE,srcb2E);
 mux2 #(32) srcbmux(srcb2E,signimmE,alusrcE,srcb3E);
-alu alu(srca2E,srcb3E,saE,alucontrolE,flushE,aluoutE,overflow,hilo_out,zero,stall_div);
+alu alu(srca2E,srcb3E,saE,alucontrolE,flushE,aluoutE,overflow,hilo_out,zero,div_stallE);
 mux2 #(5) wrmux(rtE,rdE,regdstE,writeregE);
 mux2 #(32) aluEpc8Emux(aluoutE,pcplus8E,pceightE,aluoutE2);  //jal,bal,pc+8 or aluout
 mux2 #(5) jalbalmux(writeregE,5'b11111,jalE,writeregE2);  //jal,bal,31 or rt,rd

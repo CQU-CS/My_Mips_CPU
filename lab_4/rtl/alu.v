@@ -25,12 +25,12 @@ module alu(
            input wire[4:0] sa,
            input wire[7:0] op,
            input wire flush_endE,
-        //    input wire stallM,
+           //    input wire stallM,
            output wire[31:0] ans,
            output reg overflow,
            output reg[63:0]hilo_out,
            output wire zero,
-           output wire stall_div
+           output wire div_stallE
        );
 
 wire[31:0] addr,subr,nb;
