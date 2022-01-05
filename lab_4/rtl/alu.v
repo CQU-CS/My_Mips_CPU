@@ -24,12 +24,21 @@ module alu(
            input wire[31:0] a,b,
            input wire[4:0] sa,
            input wire[7:0] op,
-           output reg[31:0] y,
+           input wire flush_endE,
+        //    input wire stallM,
+           output wire[31:0] ans,
            output reg overflow,
-           output wire zero
+           output reg[63:0]hilo_out,
+           output wire zero,
+           output wire stall_div
        );
 
 wire[31:0] addr,subr,nb;
+reg[31:0] y;
+wire[63:0] tem1,tem2;
+reg[63:0] hilo_out_mul;
+wire[63:0] hilo_out_div;
+reg [63:0] hilo_out_move;
 assign nb = ~b;
 assign subr = a + nb + 1;
 assign addr =a + b;
@@ -107,6 +116,7 @@ begin
             overflow <= 1'b0;
     endcase
 end
+assign ans = overflow ? 0 : y;
 // always @(*)
 // begin
 //     case (op[2:1])
@@ -120,4 +130,50 @@ end
 //             overflow <= 1'b0;
 //     endcase
 // end
+
+// hilo
+// always@(*)
+// begin
+//     if(op == `EXE_MTHI_OP)
+//     begin
+//         hilo_out_move <= {a,lo};
+//     end
+//     else if(op == `EXE_MTLO_OP)
+//     begin
+//         hilo_out_move <= {hi,a};
+//     end
+//     else
+//         hilo_out_move <= {hi,lo};
+// end
+
+wire mul_sign;
+assign mul_sign = (op == `EXE_MULT_OP);
+wire mul_valid;  // to judge mul?
+assign mul_valid = (op == `EXE_MULT_OP || op == `EXE_MULTU_OP);
+mult_gen_0 mul1(a,b,tem1);//mult
+mult_gen_1 mul2(a,b,tem2);//multu
+always @(*)
+begin
+    if(mul_sign)
+        hilo_out_mul<=tem1;
+    else
+        hilo_out_mul<=tem2;
+end
+wire div_sign;
+wire div_valid;
+assign div_sign  = (op == `EXE_DIV_OP);
+assign div_valid = (op == `EXE_DIV_OP || op == `EXE_DIVU_OP);
+wire div_res_valid;//slaveè®¡ç®—ç»“æžœå‡†å¤‡ï¿??
+wire div_res_ready;//masterå�¯ä»¥æŽ¥æ”¶è®¡ç®—ç»“æžœ
+assign div_res_ready = div_valid;// & ~stallM;  // E-Må¯„å­˜å™¨æ²¡æœ‰å�œï¿???
+assign div_stallE = div_valid & ~div_res_valid;
+div div(clk,(rst | flush_endE),a,b,div_sign,div_valid,div_res_ready,div_res_valid,hilo_out_div);
+
+always@(hilo_out_div,hilo_out_mul,hilo_out_move,div_res_valid)
+begin
+    hilo_out = (div_res_valid == 1)? hilo_out_div :
+             (mul_valid == 1)   ? hilo_out_mul :
+             hilo_out_move;
+end
+
 endmodule

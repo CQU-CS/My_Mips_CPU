@@ -95,7 +95,8 @@ wire hilotoregE;
 wire [31:0] hi_oE;
 wire [31:0] lo_oE;
 wire hiloaluE;
-//wire stallE;
+wire [63:0] hilo_out;
+wire stall_div,zero,overflow;
 //mem stage
 wire [4:0] writeregM;
 wire [3:0] memwriteM1;
@@ -113,7 +114,7 @@ wire [31:0] lo_iM;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
-wire [31:0] readdataWB;//鍐欏洖�?�楋�???????锟藉崐�?�楋�???????锟藉瓧鑺傛嫇�?????????
+wire [31:0] readdataWB;//鍐欏洖�?�楋�???????锟藉崐�?�楋�???????锟藉瓧鑺傛嫇�?????????
 wire hilotoregW;
 wire [31:0] hi_oW;
 wire [31:0] lo_oW;
@@ -320,7 +321,7 @@ assign pcplus8E = pcplus4E + 32'h0004;  //get pc+8
 mux3 #(32) forwardaemux(srcaE,resultW,aluoutM,forwardaE,srca2E);
 mux3 #(32) forwardbemux(srcbE,resultW,aluoutM,forwardbE,srcb2E);
 mux2 #(32) srcbmux(srcb2E,signimmE,alusrcE,srcb3E);
-alu alu(srca2E,srcb3E,saE,alucontrolE,aluoutE);
+alu alu(srca2E,srcb3E,saE,alucontrolE,flushE,aluoutE,overflow,hilo_out,zero,stall_div);
 mux2 #(5) wrmux(rtE,rdE,regdstE,writeregE);
 mux2 #(32) aluEpc8Emux(aluoutE,pcplus8E,pceightE,aluoutE2);  //jal,bal,pc+8 or aluout
 mux2 #(5) jalbalmux(writeregE,5'b11111,jalE,writeregE2);  //jal,bal,31 or rt,rd
@@ -337,8 +338,8 @@ flopr #(32) r8M(clk,rst,lo_oE,lo_oM);
 flopr #(32) r9M(clk,rst,srcaE,srcaM);
 flopr #(1) r10M(clk,rst,hiloaluE,hiloaluM);
 //hilo write from alu or rs
-assign hi_iM = hiloaluM?32'hffffeeee:srcaM;
-assign lo_iM = hiloaluM?32'hffffeeee:srcaM;
+assign hi_iM = hiloaluM?hilo_out[63:32]:srcaM;
+assign lo_iM = hiloaluM?hilo_out[31:0]:srcaM;
 
 assign writedataBM = {4{writedataM2[7:0]}};
 assign writedataHM = {2{writedataM2[15:0]}};
