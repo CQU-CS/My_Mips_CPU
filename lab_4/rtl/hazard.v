@@ -103,7 +103,7 @@ assign #1 stallE = divstall;
 assign #1 stallD = lwstallD | branchstallD | stallE;
 assign #1 stallF = stallD;
 //stalling D stalls all previous stages
-assign #1 flushE = stallD;
+assign #1 flushE = lwstallD | branchstallD;
 //stalling D flushes next stage
 // Note: not necessary to stall D stage on store
 //       if source comes from load;

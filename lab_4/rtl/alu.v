@@ -21,6 +21,7 @@
 
 `include "defines.vh"
 module alu(
+           input wire clk,rst,
            input wire[31:0] a,b,
            input wire[4:0] sa,
            input wire[7:0] op,
@@ -155,9 +156,9 @@ mult_gen_1 mul2(a,b,tem2);//multu
 always @(*)
 begin
     if(mul_sign)
-        hilo_out_mul<=tem1;
+        hilo_out_mul <= tem1;
     else
-        hilo_out_mul<=tem2;
+        hilo_out_mul <= tem2;
 end
 wire div_sign;
 wire div_valid;
@@ -171,9 +172,15 @@ div div(clk,(rst | flush_endE),a,b,div_sign,div_valid,div_res_ready,div_res_vali
 
 always@(hilo_out_div,hilo_out_mul,hilo_out_move,div_res_valid)
 begin
-    hilo_out = (div_res_valid == 1)? hilo_out_div :
-             (mul_valid == 1)   ? hilo_out_mul :
-             hilo_out_move;
+    case (op)
+        `EXE_MULT_OP,`EXE_MULTU_OP:
+            hilo_out <= hilo_out_mul;
+        `EXE_DIV_OP,`EXE_DIVU_OP:
+            hilo_out <= hilo_out_div;
+    endcase
+    // hilo_out = (div_res_valid == 1)? hilo_out_div :
+    //          (mul_valid == 1) ? hilo_out_mul :
+    //          hilo_out_move;
 end
 
 endmodule
