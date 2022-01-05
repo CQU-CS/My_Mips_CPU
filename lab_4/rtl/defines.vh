@@ -1,6 +1,6 @@
 // global macro definition
-// `define RstEnable 		1'b1
-// `define RstDisable		1'b0
+`define RstEnable 		1'b1
+`define RstDisable		1'b0
 `define ZeroWord		32'h00000000
 // `define WriteEnable		1'b1
 // `define WriteDisable	1'b0
@@ -250,6 +250,15 @@
 // `define RegNumLog2		5
 // `define NOPRegAddr		5'b00000
 
+//div
+`define DivFree 2'b00
+`define DivByZero 2'b01
+`define DivOn 2'b10
+`define DivEnd 2'b11
+`define DivResultReady 1'b1
+`define DivResultNotReady 1'b0
+`define DivStart 1'b1
+`define DivStop 1'b0
 
 // //CP0
 // `define CP0_REG_BADVADDR    5'b01000       //只读
