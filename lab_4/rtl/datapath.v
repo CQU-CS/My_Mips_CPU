@@ -128,6 +128,7 @@ hazard h(
            branchD,
            forwardaD,forwardbD,
            stallD,
+           jrD,
            //execute stage
            rsE,rtE,
            writeregE,
