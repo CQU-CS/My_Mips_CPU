@@ -62,6 +62,7 @@ module datapath(
 
 //fetch stage
 wire stallF;
+wire flushF;
 //FD
 wire [31:0] pcnextFD,pcnextbrFD,pcplus4F,pcbranchD;
 wire [31:0] pcnextjrFD;  //jr
@@ -124,6 +125,7 @@ wire [31:0] lo_oW;
 hazard h(
            //fetch stage
            stallF,
+           flushF,
            //decode stage
            rsD,rtD,
            branchD,
@@ -148,9 +150,10 @@ hazard h(
            regwriteW
        );
 
-//next PC logic (operates in fetch an decode)
+//next PC logic (operates in fetch an decode)s
 mux2 #(32) pcbrmux(pcplus4F,pcbranchD,pcsrcD,pcnextbrFD);
-mux2 #(32) jrmux(pcnextbrFD,srcaD,jrD,pcnextjrFD);
+// mux2 #(32) jrmux(pcnextbrFD,srca2D,jrD,pcnextjrFD);
+assign pcnextjrFD = jrD?srca2D:pcnextbrFD;
 mux2 #(32) pcmux(pcnextjrFD,
                  {pcplus4D[31:28],instrD[25:0],2'b00},
                  jumpD,pcnextFD);
@@ -158,7 +161,7 @@ mux2 #(32) pcmux(pcnextjrFD,
 regfile rf(clk,regwriteW,rsD,rtD,writeregW,resultW,srcaD,srcbD);
 
 //fetch stage logic
-pc #(32) pcreg(clk,rst,~stallF,pcnextFD,pcF);
+pc #(32) pcreg(clk,(rst|flushF),~stallF,pcnextFD,pcF);
 adder pcadd1(pcF,32'b100,pcplus4F);
 //decode stage
 flopenr #(32) r1D(clk,rst,~stallD,pcplus4F,pcplus4D);

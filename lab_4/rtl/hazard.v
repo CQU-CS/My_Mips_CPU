@@ -23,6 +23,7 @@
 module hazard(
            //fetch stage
            output wire stallF,
+           output wire flushF,
            //decode stage
            input wire[4:0] rsD,rtD,
            input wire branchD,
@@ -120,13 +121,15 @@ assign #1 branchstallD = branchD &
         memtoregM &
         (writeregM == rsD | writeregM == rtD));
 assign #1 divstall = div_stallE;
-assign #1 jrstall = jrD & ((writeregE == rsD) & regwriteE);
+assign #1 jrstall = jrD & (((writeregE == rsD) & regwriteE)|(writeregM &
+        (writeregM == rsD)));
 
 assign #1 stallE = divstall;
 assign #1 stallD = lwstallD | branchstallD | jrstall | stallE;
 assign #1 stallF = stallD;
 //stalling D stalls all previous stages
 assign #1 flushE = lwstallD | branchstallD;
+assign #1 flushF = jrstall;
 //stalling D flushes next stage
 // Note: not necessary to stall D stage on store
 //       if source comes from load;

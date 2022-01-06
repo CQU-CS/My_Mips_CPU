@@ -57,7 +57,7 @@ begin
                 `EXE_JR:
                     controls <= 20'b0000_0000_0010_0100_1000;
                 `EXE_JALR:
-                    controls <= 20'b1000_0000_0010_0111_1000;
+                    controls <= 20'b1100_0000_0010_0101_1000;
                 `EXE_MULT,`EXE_MULTU,`EXE_DIV,`EXE_DIVU:
                     controls <= 20'b1100_0000_0010_0000_1101;
                 default:
