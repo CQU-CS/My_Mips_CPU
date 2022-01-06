@@ -67,7 +67,8 @@ wire [31:0] pcnextFD,pcnextbrFD,pcplus4F,pcbranchD;
 wire [31:0] pcnextjrFD;  //jr
 //decode stage
 wire [31:0] pcplus4D,instrD;
-wire forwardaD,forwardbD;
+wire[1:0] forwardaD;
+wire forwardbD;
 wire [4:0] rsD,rtD,rdD,saD;
 wire flushD,stallD;
 wire [31:0] signimmD,signimmshD;
@@ -171,7 +172,7 @@ mux2 #(32) signmux(unsignimmD,signimmD,signD,signorunsignD);
 
 sl2 immsh(signorunsignD,signimmshD);
 adder pcadd2(pcplus4D,signimmshD,pcbranchD);
-mux2 #(32) forwardamux(srcaD,aluoutM,forwardaD,srca2D);
+mux3 #(32) forwardamux(srcaD,aluoutM,aluoutE,forwardaD,srca2D);
 mux2 #(32) forwardbmux(srcbD,aluoutM,forwardbD,srcb2D);
 eqcmp comp(srca2D,srcb2D,equalD);
 //assign pcsrcD = branchD & equalD;
@@ -196,7 +197,7 @@ begin
         //bgtz
         6'b000111:
         begin
-            if(srca2D>0)
+            if((srca2D[31]==0)&(srca2D!=32'h0000_0000))
             begin
                 pcsrcTempD <= 1'b1;
             end
@@ -208,7 +209,7 @@ begin
         //blez
         6'b000110:
         begin
-            if(srca2D<=0)
+            if((srca2D[31]==1)|(srca2D==32'h0000_0000))
             begin
                 pcsrcTempD <= 1'b1;
             end
@@ -236,7 +237,7 @@ begin
                 //bltz
                 5'b00000:
                 begin
-                    if(srca2D<=0)
+                    if(srca2D[31]==1)
                     begin
                         pcsrcTempD <= 1'b1;
                     end
@@ -248,7 +249,7 @@ begin
                 //bltzal
                 5'b10000:
                 begin
-                    if(srca2D<=0)
+                    if(srca2D[31]==1)
                     begin
                         pcsrcTempD <= 1'b1;
                     end
@@ -260,7 +261,7 @@ begin
                 //bgez
                 5'b00001:
                 begin
-                    if(srca2D>=0)
+                    if(srca2D[31]==0)
                     begin
                         pcsrcTempD <= 1'b1;
                     end
@@ -272,7 +273,7 @@ begin
                 //bgezal
                 5'b10001:
                 begin
-                    if(srca2D>=0)
+                    if(srca2D[31]==0)
                     begin
                         pcsrcTempD <= 1'b1;
                     end
