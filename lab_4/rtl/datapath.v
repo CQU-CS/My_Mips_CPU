@@ -128,6 +128,7 @@ hazard h(
            branchD,
            forwardaD,forwardbD,
            stallD,
+           jrD,
            //execute stage
            rsE,rtE,
            writeregE,
@@ -195,7 +196,7 @@ begin
         //bgtz
         6'b000111:
         begin
-            if(srca2D>0)
+            if((srca2D[31]==0)&(srca2D!=32'h0000_0000))
             begin
                 pcsrcTempD <= 1'b1;
             end
@@ -207,7 +208,7 @@ begin
         //blez
         6'b000110:
         begin
-            if(srca2D<=0)
+            if((srca2D[31]==1)|(srca2D==32'h0000_0000))
             begin
                 pcsrcTempD <= 1'b1;
             end
@@ -235,7 +236,7 @@ begin
                 //bltz
                 5'b00000:
                 begin
-                    if(srca2D<=0)
+                    if(srca2D[31]==1)
                     begin
                         pcsrcTempD <= 1'b1;
                     end
@@ -247,7 +248,7 @@ begin
                 //bltzal
                 5'b10000:
                 begin
-                    if(srca2D<=0)
+                    if(srca2D[31]==1)
                     begin
                         pcsrcTempD <= 1'b1;
                     end
@@ -259,7 +260,7 @@ begin
                 //bgez
                 5'b00001:
                 begin
-                    if(srca2D>=0)
+                    if(srca2D[31]==0)
                     begin
                         pcsrcTempD <= 1'b1;
                     end
@@ -271,7 +272,7 @@ begin
                 //bgezal
                 5'b10001:
                 begin
-                    if(srca2D>=0)
+                    if(srca2D[31]==0)
                     begin
                         pcsrcTempD <= 1'b1;
                     end
