@@ -67,7 +67,8 @@ wire [31:0] pcnextFD,pcnextbrFD,pcplus4F,pcbranchD;
 wire [31:0] pcnextjrFD;  //jr
 //decode stage
 wire [31:0] pcplus4D,instrD;
-wire forwardaD,forwardbD;
+wire[1:0] forwardaD;
+wire forwardbD;
 wire [4:0] rsD,rtD,rdD,saD;
 wire flushD,stallD;
 wire [31:0] signimmD,signimmshD;
@@ -171,7 +172,7 @@ mux2 #(32) signmux(unsignimmD,signimmD,signD,signorunsignD);
 
 sl2 immsh(signorunsignD,signimmshD);
 adder pcadd2(pcplus4D,signimmshD,pcbranchD);
-mux2 #(32) forwardamux(srcaD,aluoutM,forwardaD,srca2D);
+mux3 #(32) forwardamux(srcaD,aluoutM,aluoutE,forwardaD,srca2D);
 mux2 #(32) forwardbmux(srcbD,aluoutM,forwardbD,srcb2D);
 eqcmp comp(srca2D,srcb2D,equalD);
 //assign pcsrcD = branchD & equalD;
