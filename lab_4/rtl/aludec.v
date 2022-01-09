@@ -73,6 +73,8 @@ begin
             default:
                 alucontrol <= `EXE_NOP_OP;
         endcase
+        6'b111111:
+            alucontrol <= 8'b11111111;
         `EXE_BEQ:
             alucontrol <= `EXE_SUB_OP;//sub (for beq)
         `EXE_ADDI:

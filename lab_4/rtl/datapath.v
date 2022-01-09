@@ -40,6 +40,7 @@ module datapath(
            input wire hilowriteD,
            input wire hilotoregD,
            input wire hiloaluD,
+           input wire hiloreadD,
            //execute stage
            input wire memtoregE,
            input wire alusrcE,regdstE,
@@ -57,7 +58,11 @@ module datapath(
            //writeback stage
            input wire memtoregW,
            input wire regwriteW,
-           input wire[2:0] lshbW
+           input wire[2:0] lshbW,
+           output wire[31:0] pcW,
+           output wire [4:0] writeregW,
+           output wire[31:0] resultW,
+           output wire[31:0] writedataW
        );
 
 //fetch stage
@@ -78,6 +83,11 @@ wire equalD;
 wire pcsrcD;
 wire [31:0] unsignimmD;
 wire [31:0] signorunsignD;
+wire [31:0] pcD;
+wire [1:0] forwardcD;
+wire [31:0] srca3D;
+wire [31:0] srcb3D;
+wire [1:0] forwarddD;
 //execute stage
 wire [1:0] forwardaE,forwardbE;
 wire [4:0] rsE,rtE,rdE,saE;
@@ -97,8 +107,10 @@ wire hilotoregE;
 wire [31:0] hi_oE;
 wire [31:0] lo_oE;
 wire hiloaluE;
+wire hiloreadE;
 wire [63:0] hilo_outE;
 wire div_stallE,zero,overflow;
+wire [31:0] pcE;
 //mem stage
 wire [4:0] writeregM;
 wire [3:0] memwriteM1;
@@ -111,14 +123,17 @@ wire [31:0] hi_oM;
 wire [31:0] lo_oM;
 wire [31:0] srcaM;
 wire hiloaluM;
+wire hiloreadM;
 wire [31:0] hi_iM;
 wire [31:0] lo_iM;
 wire [63:0] hilo_outM;
+wire [31:0] pcM;
 //writeback stage
 wire [4:0] writeregW;
 wire [31:0] aluoutW,readdataW,resultW;
 wire [31:0] readdataWB;//鍐欏洖�?�楋�????????锟藉崐�?�楋�????????锟藉瓧鑺傛嫇�??????????
 wire hilotoregW;
+wire hiloreadW;
 wire [31:0] hi_oW;
 wire [31:0] lo_oW;
 //hazard detection
@@ -132,6 +147,10 @@ hazard h(
            forwardaD,forwardbD,
            stallD,
            jrD,
+           hilowriteD,
+           rdD,
+           forwardcD,
+           forwarddD,
            //execute stage
            rsE,rtE,
            writeregE,
@@ -141,13 +160,18 @@ hazard h(
            flushE,
            stallE,
            div_stallE,
+           rdE,
+           hilotoregE,
            //mem stage
            writeregM,
            regwriteM,
            memtoregM,
+           hilotoregM,
+           hiloreadM,
            //write back stage
            writeregW,
-           regwriteW
+           regwriteW,
+           hiloreadW
        );
 
 //next PC logic (operates in fetch an decode)s
@@ -166,6 +190,7 @@ adder pcadd1(pcF,32'b100,pcplus4F);
 //decode stage
 flopenr #(32) r1D(clk,rst,~stallD,pcplus4F,pcplus4D);
 flopenrc #(32) r2D(clk,rst,~stallD,flushD,instrF,instrD);
+flopenrc #(32) r3D(clk,rst,~stallD,flushD,pcF,pcD);
 
 signext se(instrD[15:0],signimmD);
 assign unsignimmD = {16'h0000,instrD[15:0]};
@@ -175,8 +200,11 @@ mux2 #(32) signmux(unsignimmD,signimmD,signD,signorunsignD);
 
 sl2 immsh(signorunsignD,signimmshD);
 adder pcadd2(pcplus4D,signimmshD,pcbranchD);
-mux3 #(32) forwardamux(srcaD,aluoutM,aluoutE,forwardaD,srca2D);
-mux2 #(32) forwardbmux(srcbD,aluoutM,forwardbD,srcb2D);
+mux3 #(32) forwardamux(srcaD,aluoutM,aluoutE,forwardaD,srca3D);
+mux3 #(32) forwarda2mux(srca3D,hi_oM,lo_oM,forwarddD,srca2D);
+// mux2 #(32) forwardbmux(srcbD,aluoutM,forwardbD,srcb2D);
+mux2 #(32) forwardbmux(srcbD,aluoutM,forwardbD,srcb3D);
+mux3 #(32) forwardb2mux(srcb3D,hi_oE,lo_oE,forwardcD,srcb2D);
 eqcmp comp(srca2D,srcb2D,equalD);
 //assign pcsrcD = branchD & equalD;
 
@@ -319,6 +347,8 @@ flopenrc #(5) r11E(clk,rst,~stallE,flushE,saD,saE);
 flopenrc #(1) r12E(clk,rst,~stallE,flushE,hilowriteD,hilowriteE);
 flopenrc #(1) r13E(clk,rst,~stallE,flushE,hilotoregD,hilotoregE);
 flopenrc #(1) r14E(clk,rst,~stallE,flushE,hiloaluD,hiloaluE);
+flopenrc #(1) r15E(clk,rst,~stallE,flushE,hiloreadD,hiloreadE);
+flopenrc #(32) r16E(clk,rst,~stallE,flushE,pcD,pcE);
 
 //hiloregfile
 hilo_reg hilo(clk,rst,hilowriteM,hi_iM,lo_iM,hi_oE,lo_oE);
@@ -342,9 +372,12 @@ flopr #(1) r5M(clk,rst,hilowriteE,hilowriteM);
 flopr #(1) r6M(clk,rst,hilotoregE,hilotoregM);
 flopr #(32) r7M(clk,rst,hi_oE,hi_oM);
 flopr #(32) r8M(clk,rst,lo_oE,lo_oM);
-flopr #(32) r9M(clk,rst,srcaE,srcaM);
+//flopr #(32) r9M(clk,rst,srcaE,srcaM);
+flopr #(32) r9M(clk,rst,srca2E,srcaM);
 flopr #(1) r10M(clk,rst,hiloaluE,hiloaluM);
 flopr #(64) r11M(clk,rst,hilo_outE,hilo_outM);
+flopr #(32) r12M(clk,rst,pcE,pcM);
+flopr #(1) r13M(clk,rst,hiloreadE,hiloreadM);
 //hilo write from alu or rs
 assign hi_iM = hiloaluM?hilo_outM[63:32]:srcaM;
 assign lo_iM = hiloaluM?hilo_outM[31:0]:srcaM;
@@ -372,9 +405,9 @@ begin
         begin
             case(aluoutM[1])
                 1'b0:
-                    memwriteTemp <= 4'b1100;
-                1'b1:
                     memwriteTemp <= 4'b0011;
+                1'b1:
+                    memwriteTemp <= 4'b1100;
                 default:
                     memwriteTemp <= 4'b0000;
             endcase
@@ -386,13 +419,13 @@ begin
             //memwriteTemp <= 4'b1111;
             case(aluoutM[1:0])
                 2'b00:
-                    memwriteTemp <= 4'b1000;
-                2'b01:
-                    memwriteTemp <= 4'b0100;
-                2'b10:
-                    memwriteTemp <= 4'b0010;
-                2'b11:
                     memwriteTemp <= 4'b0001;
+                2'b01:
+                    memwriteTemp <= 4'b0010;
+                2'b10:
+                    memwriteTemp <= 4'b0100;
+                2'b11:
+                    memwriteTemp <= 4'b1000;
                 default:
                     memwriteTemp <= 4'b0000;
             endcase
@@ -414,6 +447,9 @@ flopr #(5) r3W(clk,rst,writeregM,writeregW);
 flopr #(1) r4W(clk,rst,hilotoregM,hilotoregW);
 flopr #(32) r5W(clk,rst,hi_oM,hi_oW);
 flopr #(32) r6W(clk,rst,lo_oM,lo_oW);
+flopr #(32) r7W(clk,rst,pcM,pcW);
+flopr #(32) r8W(clk,rst,writedataM,writedataW);
+flopr #(1) r9W(clk,rst,hiloreadM,hiloreadW);
 //load judge
 reg[31:0] readdatatemp = 32'b0;
 always @(*)
@@ -425,19 +461,19 @@ begin
             case(aluoutW[1:0])
                 2'b00:
                 begin
-                    readdatatemp <= {{24{readdataW[31]}},readdataW[31:24]};
+                    readdatatemp <= {{24{readdataW[7]}},readdataW[7:0]};
                 end
                 2'b01:
                 begin
-                    readdatatemp <= {{24{readdataW[23]}},readdataW[23:16]};
+                    readdatatemp <= {{24{readdataW[15]}},readdataW[15:8]};
                 end
                 2'b10:
                 begin
-                    readdatatemp <= {{24{readdataW[15]}},readdataW[15:8]};
+                    readdatatemp <= {{24{readdataW[23]}},readdataW[23:16]};
                 end
                 2'b11:
                 begin
-                    readdatatemp <= {{24{readdataW[7]}},readdataW[7:0]};
+                    readdatatemp <= {{24{readdataW[31]}},readdataW[31:24]};
                 end
                 default:
                 begin
@@ -451,19 +487,19 @@ begin
             case(aluoutW[1:0])
                 2'b00:
                 begin
-                    readdatatemp <= {24'b0,readdataW[31:24]};
+                    readdatatemp <= {24'b0,readdataW[7:0]};
                 end
                 2'b01:
                 begin
-                    readdatatemp <= {24'b0,readdataW[23:16]};
+                    readdatatemp <= {24'b0,readdataW[15:8]};
                 end
                 2'b10:
                 begin
-                    readdatatemp <= {24'b0,readdataW[15:8]};
+                    readdatatemp <= {24'b0,readdataW[23:16]};
                 end
                 2'b11:
                 begin
-                    readdatatemp <= {24'b0,readdataW[7:0]};
+                    readdatatemp <= {24'b0,readdataW[31:24]};
                 end
                 default:
                 begin
@@ -477,11 +513,11 @@ begin
             case(aluoutW[1])
                 1'b0:
                 begin
-                    readdatatemp <= {{16{readdataW[31]}},readdataW[31:16]};
+                    readdatatemp <= {{16{readdataW[15]}},readdataW[15:0]};
                 end
                 1'b1:
                 begin
-                    readdatatemp <= {{16{readdataW[15]}},readdataW[15:0]};
+                    readdatatemp <= {{16{readdataW[31]}},readdataW[31:16]};
                 end
                 default:
                 begin
@@ -495,11 +531,11 @@ begin
             case(aluoutW[1])
                 1'b0:
                 begin
-                    readdatatemp <= {16'b0,readdataW[31:16]};
+                    readdatatemp <= {16'b0,readdataW[15:0]};
                 end
                 1'b1:
                 begin
-                    readdatatemp <= {16'b0,readdataW[15:0]};
+                    readdatatemp <= {16'b0,readdataW[31:16]};
                 end
                 default:
                 begin

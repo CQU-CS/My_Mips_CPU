@@ -46,6 +46,8 @@ assign addr =a + b;
 always @(*)
 begin
     case (op)
+        8'b11111111:
+            y <= a[31] ? (~a + 1) : a;
         `EXE_ADD_OP:
             y <= addr;
         `EXE_ADDU_OP:
@@ -75,34 +77,15 @@ begin
         `EXE_SRA_OP:
             y <= ({32{b[31]}} << (6'd32-{1'b0,sa})) | b >> sa;
         `EXE_SLLV_OP:
-            y <= (b << a);
+            y <= (b << a[4:0]);
         `EXE_SRLV_OP:
-            y <= (b >> a);
+            y <= (b >> a[4:0]);
         `EXE_SRAV_OP:
-            y <= ({32{b[31]}} << (6'd32-{1'b0,a})) | b >> a;
+            y <= ({32{b[31]}} << (6'd32-{1'b0,a[4:0]})) | b >> a[4:0];
         default:
             y <= 32'b0;
     endcase
 end
-
-
-// assign nb = op[2] ? ~b : b;
-// assign s = a + nb + op[2];
-// always @(*)
-// begin
-//     case (op[1:0])
-//         2'b00:
-//             y <= a & nb;
-//         2'b01:
-//             y <= a | nb;
-//         2'b10:
-//             y <= s;
-//         2'b11:
-//             y <= s[31];
-//         default :
-//             y <= 32'b0;
-//     endcase
-// end
 
 assign zero = (y == 32'b0);
 
@@ -118,35 +101,6 @@ begin
     endcase
 end
 assign ans = overflow ? 0 : y;
-// always @(*)
-// begin
-//     case (op[2:1])
-//         2'b01:
-//             overflow <= a[31] & b[31] & ~s[31] |
-//             ~a[31] & ~b[31] & s[31];
-//         2'b11:
-//             overflow <= ~a[31] & b[31] & s[31] |
-//             a[31] & ~b[31] & ~s[31];
-//         default :
-//             overflow <= 1'b0;
-//     endcase
-// end
-
-// hilo
-// always@(*)
-// begin
-//     if(op == `EXE_MTHI_OP)
-//     begin
-//         hilo_out_move <= {a,lo};
-//     end
-//     else if(op == `EXE_MTLO_OP)
-//     begin
-//         hilo_out_move <= {hi,a};
-//     end
-//     else
-//         hilo_out_move <= {hi,lo};
-// end
-
 wire mul_sign;
 assign mul_sign = (op == `EXE_MULT_OP);
 wire mul_valid;  // to judge mul?
@@ -164,13 +118,13 @@ wire div_sign;
 wire div_valid;
 assign div_sign  = (op == `EXE_DIV_OP);
 assign div_valid = (op == `EXE_DIV_OP || op == `EXE_DIVU_OP);
-wire div_res_valid;//slaveè®¡ç®—ç»“æžœå‡†å¤‡ï¿??
-wire div_res_ready;//masterå�¯ä»¥æŽ¥æ”¶è®¡ç®—ç»“æžœ
-assign div_res_ready = div_valid;// & ~stallM;  // E-Må¯„å­˜å™¨æ²¡æœ‰å�œï¿???
+wire div_res_valid;
+wire div_res_cancle;
+assign div_res_cancle = 1'b0;
 assign div_stallE = div_valid & ~div_res_valid;
-div div(clk,(rst | flush_endE),a,b,div_sign,div_valid,div_res_ready,div_res_valid,hilo_out_div);
+div div(clk,(rst | flush_endE),a,b,div_sign,div_valid,div_res_cancle,div_res_valid,hilo_out_div);
 
-always@(hilo_out_div,hilo_out_mul,hilo_out_move,div_res_valid)
+always@(*)
 begin
     case (op)
         `EXE_MULT_OP,`EXE_MULTU_OP:
@@ -178,9 +132,6 @@ begin
         `EXE_DIV_OP,`EXE_DIVU_OP:
             hilo_out <= hilo_out_div;
     endcase
-    // hilo_out = (div_res_valid == 1)? hilo_out_div :
-    //          (mul_valid == 1) ? hilo_out_mul :
-    //          hilo_out_move;
 end
 
 endmodule

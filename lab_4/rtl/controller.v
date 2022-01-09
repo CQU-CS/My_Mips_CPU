@@ -37,6 +37,7 @@ module controller(
            output wire hilowriteD,
            output wire hilotoregD,
            output wire hiloaluD,
+           output wire hiloreadD,
 
            //execute stage
            input wire flushE,
@@ -83,14 +84,15 @@ maindec md(
             signD,
             hilowriteD,
             hilotoregD,
-            hiloaluD
+            hiloaluD,
+            hiloreadD
         );
 aludec ad(functD,opD,alucontrolD);
 
 //assign pcsrcD = branchD & equalD;
 
 //pipeline registers
-flopenrc #(12) regE(
+flopenrc #(15) regE(
            clk,
            rst,
            ~stallE,

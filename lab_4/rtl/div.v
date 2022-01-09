@@ -23,17 +23,17 @@
 module div(
            input wire clk,
            input wire rst,
-           input wire [31:0] a,    //divident
-           input wire [31:0] b,    //divisor
-           input wire sign,        //1:signed
+           input wire [31:0] a,    //???
+           input wire [31:0] b,    //??
+           input wire sign,        //????
 
-           input wire opn_valid,   //master操作数准备好
-           input wire res_ready,   //master可以接收计算结果
-           output reg res_valid,   //slave计算结果准备�?
+           input wire valid,   //master??????
+           input wire ready,   //master????????
+           output reg div_run,   //?????????????stall
            output wire [63:0] result
        );
 reg [31:0] a_save, b_save;
-reg [63:0] SR;                  //shift register
+reg [63:0] SR;                  //????????
 reg [32 :0] NEG_DIVISOR;        //divisor 2's complement
 wire [31:0] REMAINER, QUOTIENT;
 assign REMAINER = SR[63:32];
@@ -44,7 +44,7 @@ wire [32:0] divisor_abs;
 wire [31:0] remainer, quotient;
 
 assign divident_abs = (sign & a[31]) ? ~a + 1'b1 : a;
-//余数符号与被除数相同
+//??????????
 assign remainer = (sign & a_save[31]) ? ~REMAINER + 1'b1 : REMAINER;
 assign quotient = sign & (a_save[31] ^ b_save[31]) ? ~QUOTIENT + 1'b1 : QUOTIENT;
 assign result = {remainer,quotient};
@@ -71,17 +71,16 @@ begin
         cnt <= 0;
         start_cnt <= 1'b0;
     end
-    else if(~start_cnt & opn_valid & ~res_valid)
+    else if(~start_cnt & valid & ~div_run)
     begin
         cnt <= 1;
         start_cnt <= 1'b1;
-        //save a,b
         a_save <= a;
         b_save <= b;
 
         //Register init
-        SR[63:0] <= {31'b0,divident_abs,1'b0}; //left shift one bit initially
-        NEG_DIVISOR <= (sign & b[31]) ? {1'b1,b} : ~{1'b0,b} + 1'b1; //divisor_abs的补�?
+        SR[63:0] <= {31'b0,divident_abs,1'b0}; //????
+        NEG_DIVISOR <= (sign & b[31]) ? {1'b1,b} : ~{1'b0,b} + 1'b1; //???
     end
     else if(start_cnt)
     begin
@@ -98,17 +97,17 @@ begin
         begin
             cnt <= cnt + 1;
 
-            SR[63:0] <= {mux_result[30:0],SR[31:1],CO,1'b0}; //wsl: write and shift left
+            SR[63:0] <= {mux_result[30:0],SR[31:1],CO,1'b0}; //??????
         end
     end
 end
 
 wire data_go;
-assign data_go = res_valid & res_ready;
+assign data_go = div_run & ready;
 always @(posedge clk)
 begin
-    res_valid <= rst     ? 1'b0 :
-              cnt[5]  ? 1'b1 :
-              data_go ? 1'b0 : res_valid;
+    div_run <= rst     ? 1'b0 :
+            cnt[5]  ? 1'b1 :
+            data_go ? 1'b0 : div_run;
 end
 endmodule
