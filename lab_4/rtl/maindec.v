@@ -45,7 +45,7 @@ always @(*)
 begin
     case (op)
         6'b111111:
-            controls <= 21'b1100_0000_0010_0000_1000_0;//R-TYRE
+            controls <= 21'b1100_0000_0010_0000_1000_0;//ABS
         `EXE_SPECIAL_INST:
         begin
             case (funct)
